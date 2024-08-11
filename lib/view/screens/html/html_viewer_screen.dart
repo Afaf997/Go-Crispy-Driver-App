@@ -18,6 +18,7 @@ class HtmlViewerScreen extends StatelessWidget {
     String data = isPrivacyPolicy ? Provider.of<SplashProvider>(context, listen: false).configModel!.privacyPolicy ?? ''
         : Provider.of<SplashProvider>(context, listen: false).configModel!.termsAndConditions ?? '';
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppBar(title: getTranslated(isPrivacyPolicy ? 'privacy_policy' : 'terms_and_condition', context)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),

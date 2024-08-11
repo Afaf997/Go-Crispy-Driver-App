@@ -99,6 +99,7 @@ class ProfileScreen extends StatelessWidget {
 
                       ProfileButton(icon: Icons.logout, title: getTranslated('logout', context), onTap: () {
                         showDialog(context: context, barrierDismissible: false, builder: (context) => const SignOutConfirmationDialog());
+                        
                       }),
 
 
