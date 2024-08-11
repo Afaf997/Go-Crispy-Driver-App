@@ -4,6 +4,7 @@ import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/provider/language_provider.dart';
 import 'package:resturant_delivery_boy/provider/localization_provider.dart';
 import 'package:resturant_delivery_boy/utill/app_constants.dart';
+import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/base/custom_button.dart';
@@ -84,14 +85,14 @@ class ChooseLanguageScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: languageProvider.selectIndex == index ? Theme.of(context).primaryColor.withOpacity(.15) : null,
+          color: languageProvider.selectIndex == index ? ColorResources.COLOR_PRIMARY.withOpacity(.15) : null,
           border: Border(
               top: BorderSide(
                   width: languageProvider.selectIndex == index ? 1.0 : 0.0,
-                  color: languageProvider.selectIndex == index ? Theme.of(context).primaryColor : Colors.transparent),
+                  color: languageProvider.selectIndex == index ? ColorResources.COLOR_PRIMARY : Colors.transparent),
               bottom: BorderSide(
                   width: languageProvider.selectIndex == index ? 1.0 : 0.0,
-                  color: languageProvider.selectIndex == index ? Theme.of(context).primaryColor : Colors.transparent)),
+                  color: languageProvider.selectIndex == index ? ColorResources.COLOR_PRIMARY : Colors.transparent)),
         ),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 15),
@@ -123,7 +124,7 @@ class ChooseLanguageScreen extends StatelessWidget {
                       Images.done,
                       width: 17,
                       height: 17,
-                      color: Theme.of(context).primaryColor,
+                      color:ColorResources.COLOR_PRIMARY,
                     )
                   : const SizedBox.shrink()
             ],

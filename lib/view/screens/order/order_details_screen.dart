@@ -15,6 +15,7 @@ import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
 import 'package:resturant_delivery_boy/provider/time_provider.dart';
 import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
+import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
@@ -658,7 +659,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ///Put label over here
                       label: Text(
                         getTranslated('swip_to_confirm_order', context)!,
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).primaryColor),
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_WHITE,),
                       ),
                       dismissThresholds: 0.5,
                       dismissible: false,
@@ -673,7 +674,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ///Change All the color and size from here.
                       radius: 10,
                       boxShadow: const BoxShadow(blurRadius: 0.0),
-                      buttonColor: Theme.of(context).primaryColor,
+                      buttonColor: ColorResources.COLOR_PRIMARY,
                       backgroundColor: Theme.of(context).cardColor,
                       baseColor: Theme.of(context).primaryColor,
                     ),

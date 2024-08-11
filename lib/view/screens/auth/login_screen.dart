@@ -4,6 +4,7 @@ import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/main.dart';
 import 'package:resturant_delivery_boy/provider/auth_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
+import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
@@ -52,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
 
     return Scaffold(
+      backgroundColor: ColorResources.COLOR_WHITE,
       body: Padding(
         padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
         child: Consumer<AuthProvider>(
