@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:resturant_delivery_boy/provider/language_provider.dart';
+import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
 
@@ -70,8 +71,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
       Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
-            color: Theme.of(context).cardColor,
-            border: Border.all(color: widget.isShowBorder ? Theme.of(context).hintColor.withOpacity(0.5) : Colors.transparent),
+            color: ColorResources.kGrayLogo,
+            // border: Border.all(color: widget.isShowBorder ? Theme.of(context).hintColor.withOpacity(0.5) : Colors.transparent),
         ),
         child: TextField(
           maxLines: widget.maxLines,
@@ -90,7 +91,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
             isDense: true,
             hintText: widget.hintText,
-            fillColor: widget.fillColor ?? Theme.of(context).cardColor,
+            fillColor: ColorResources.kGrayLogo,
             hintStyle: rubikRegular.copyWith(
               fontSize: Dimensions.fontSizeSmall,
               color: Theme.of(context).hintColor.withOpacity(0.6),

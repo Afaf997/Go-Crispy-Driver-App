@@ -55,14 +55,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: ColorResources.COLOR_WHITE,
       body: Padding(
-        padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+        padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
         child: Consumer<AuthProvider>(
           builder: (context, authProvider, child) => Form(
             key: _formKeyLogin,
             child: ListView(
               physics: const BouncingScrollPhysics(),
               children: [
-                //SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Image.asset(
@@ -72,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     matchTextDirection: true,
                   ),
                 ),
-                //SizedBox(height: 20),
                 Center(
                     child: Text(
                   getTranslated('login', context)!,
@@ -204,18 +202,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-                splashProvider.configModel!.toggleDmRegistration! ? TextButton(
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(1, 40),
-                  ),
-                  onPressed: () async => await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const DeliveryManRegistrationScreen()),
-                  ),
-                  child: RichText(text: TextSpan(children: [
-                    TextSpan(text: '${getTranslated('join_as_a', context)} ', style: rubikRegular.copyWith(color: Theme.of(context).disabledColor)),
-                    TextSpan(text:getTranslated('delivery_man', context), style: rubikMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color)),
-                  ])),
-                ) : const SizedBox(),
+               splashProvider.configModel!.toggleDmRegistration! ? Center(
+                 child: RichText(
+                   text: TextSpan(
+                     children: [
+                       TextSpan(
+                         text: '${getTranslated('join_as_a', context)} ',
+                         style: rubikRegular.copyWith(color: Theme.of(context).disabledColor),
+                       ),
+                       TextSpan(
+                         text: getTranslated('delivery_man', context),
+                         style: rubikMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
+                       ),
+                     ],
+                   ),
+                 ),
+               ) : const SizedBox()
+
               ],
             ),
           ),

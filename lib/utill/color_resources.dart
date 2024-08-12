@@ -6,6 +6,7 @@ import 'package:resturant_delivery_boy/provider/theme_provider.dart';
 
 class ColorResources {
   static const Color COLOR_PRIMARY =  Color(0xFFED5D37);
+  static const Color kGrayLogo = Color(0xFFEEEEEE);
   static const Color COLOR_GREY = Color(0xFFA0A4A8);
   static const Color COLOR_BLACK = Color(0xFF000000);
   static const Color COLOR_NERO = Color(0xFF1F1F1F);
