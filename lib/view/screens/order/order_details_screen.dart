@@ -81,9 +81,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).cardColor,
+      backgroundColor: ColorResources.SEARCH_BG,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).cardColor,
+        backgroundColor:ColorResources.COLOR_WHITE,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -169,7 +169,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             const Icon(Icons.watch_later, size: 17),
-                            const SizedBox(width: Dimensions.fontSizeLarge),
                             orderModel!.deliveryTime == null ? Text(DateConverter.isoStringToLocalDateOnly(orderModel!.createdAt!),
                               style: rubikRegular,
                             ) : Text(
@@ -193,11 +192,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     Container(
                       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
+                        color: ColorResources.SEARCH_BG,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [BoxShadow(
                           color: Theme.of(context).shadowColor,
-                          blurRadius: 5, spreadRadius: 1,
+                           spreadRadius: 1,
+                           
                         )],
                       ),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -259,7 +259,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           Text('${getTranslated('payment_status', context)}:', style: rubikRegular),
                           const SizedBox(width: Dimensions.fontSizeLarge),
                           Text(getTranslated('${orderModel!.paymentStatus}', context)!,
-                              style: rubikMedium.copyWith(color: Theme.of(context).primaryColor)),
+                              style: rubikMedium.copyWith(color: ColorResources.COLOR_PRIMARY,)),
                         ])
                             : const SizedBox.shrink(),
                       ],
@@ -340,12 +340,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       Text('${getTranslated('quantity', context)}:',
                                           style: rubikRegular),
                                       Text(' ${order.orderDetails![index].quantity}',
-                                          style: rubikMedium.copyWith(color: Theme.of(context).primaryColor)),
+                                          style: rubikMedium.copyWith(color:ColorResources.COLOR_PRIMARY,)),
                                     ],
                                   ),
                                   Text(
                                     PriceConverter.convertPrice(context, order.orderDetails![index].price),
-                                    style: rubikMedium.copyWith(color: Theme.of(context).primaryColor),
+                                    style: rubikMedium.copyWith(color: ColorResources.COLOR_PRIMARY),
                                   ),
                                 ]),
                                 const SizedBox(height: Dimensions.paddingSizeSmall),
@@ -486,10 +486,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Text(getTranslated('total_amount', context)!,
-                          style: rubikMedium.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).primaryColor)),
+                          style: rubikMedium.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: ColorResources.COLOR_PRIMARY)),
                       Text(
                         PriceConverter.convertPrice(context, totalPrice),
-                        style: rubikMedium.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).primaryColor),
+                        style: rubikMedium.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: ColorResources.COLOR_PRIMARY),
                       ),
                     ]),
                     const SizedBox(height: Dimensions.paddingSizeDefault),
@@ -503,7 +503,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                        radius: const Radius.circular(Dimensions.radiusDefault),
                        child: Container(
                          decoration: BoxDecoration(
-                           color: Theme.of(context).primaryColor.withOpacity(0.02),
+                           color: ColorResources.COLOR_PRIMARY.withOpacity(0.02),
                          ),
                          padding: const EdgeInsets.symmetric(horizontal : Dimensions.paddingSizeSmall, vertical: 1),
                          child: Column(children: paymentList.map((payment) => Padding(
@@ -590,7 +590,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ///Put label over here
                       label: Text(
                         getTranslated('swip_to_deliver_order', context)!,
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).primaryColor),
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_PRIMARY),
                       ),
                       dismissThresholds: 0.5,
                       dismissible: false,
@@ -605,9 +605,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ///Change All the color and size from here.
                       radius: 10,
                       boxShadow: const BoxShadow(blurRadius: 0.0),
-                      buttonColor: Theme.of(context).primaryColor,
+                      buttonColor: ColorResources.COLOR_PRIMARY,
                       backgroundColor: Theme.of(context).canvasColor,
-                      baseColor: Theme.of(context).primaryColor,
+                      baseColor: ColorResources.COLOR_PRIMARY,
                     ),
                   ),
                 ),
@@ -659,7 +659,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ///Put label over here
                       label: Text(
                         getTranslated('swip_to_confirm_order', context)!,
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_WHITE,),
                       ),
                       dismissThresholds: 0.5,
                       dismissible: false,
@@ -673,10 +672,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                       ///Change All the color and size from here.
                       radius: 10,
-                      boxShadow: const BoxShadow(blurRadius: 0.0),
+                      boxShadow: const BoxShadow(blurRadius: 2),
                       buttonColor: ColorResources.COLOR_PRIMARY,
                       backgroundColor: Theme.of(context).cardColor,
-                      baseColor: Theme.of(context).primaryColor,
+                      baseColor: ColorResources.COLOR_PRIMARY,
                     ),
                   ),
                 ),
@@ -685,7 +684,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
             ],
           )
-              : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)));
+              : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY)));
         },
       ),
     );
@@ -702,9 +701,9 @@ class ProductTypeView extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isActive = Provider.of<SplashProvider>(context, listen: false).configModel!.isVegNonVegActive!;
     return (productType == null || !isActive)  ? const SizedBox() : Container(
-      decoration: BoxDecoration(
+      decoration:const BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(4)),
-        color: Theme.of(context).primaryColor,
+        color: ColorResources.COLOR_PRIMARY,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0 ,vertical: 2),

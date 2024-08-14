@@ -18,15 +18,15 @@ class OrderHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<OrderProvider>(context, listen: false).getOrderHistory(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorResources.SEARCH_BG,
       appBar: AppBar(
         leading: const SizedBox.shrink(),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Theme.of(context).cardColor,
+        backgroundColor:ColorResources.COLOR_WHITE,
         title: Text(
           getTranslated('order_history', context)!,
-          style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color, fontSize: Dimensions.fontSizeLarge),
+          style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_BLACK, fontSize: Dimensions.fontSizeLarge,fontWeight: FontWeight.w600),
         ),
       ),
       body: Consumer<OrderProvider>(
@@ -35,7 +35,7 @@ class OrderHistoryScreen extends StatelessWidget {
                 onRefresh: () => order.refresh(context),
                 displacement: 20,
                 color: Colors.white,
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor:ColorResources.COLOR_PRIMARY,
                 key: _refreshIndicatorKey,
                 child: order.allOrderHistory!.isNotEmpty
                     ? ListView.builder(
@@ -50,10 +50,10 @@ class OrderHistoryScreen extends StatelessWidget {
                                 padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                                 margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).cardColor,
+                                  color: ColorResources.COLOR_WHITE,
                                   boxShadow: [
                                     BoxShadow(
-                                        color: Theme.of(context).shadowColor.withOpacity(.5), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1))
+                                        color: Theme.of(context).shadowColor.withOpacity(.2), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1))
                                   ],
                                   borderRadius: BorderRadius.circular(10),
                                 ),

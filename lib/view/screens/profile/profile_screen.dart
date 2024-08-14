@@ -69,18 +69,6 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                   child: Column(
                     children: [
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Text(
-                      //       getTranslated('theme_style', context)!,
-                      //       style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      //         fontSize: Dimensions.fontSizeLarge,
-                      //       ),
-                      //     ),
-                      //     const StatusWidget()
-                      //   ],
-                      // ),
                       const SizedBox(height: 10),
                       _userInfoWidget(context: context, text: profileProvider.userInfoModel!.fName),
                       const SizedBox(height: 15),
@@ -123,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Text(
         text ?? '',
-        style: Theme.of(context).textTheme.displayMedium,
+        style:const TextStyle(fontWeight: FontWeight.w500),
       ),
     );
   }

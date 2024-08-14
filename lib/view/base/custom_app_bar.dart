@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
 
@@ -16,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).textTheme.bodyLarge!.color),
         onPressed: () => Navigator.pop(context),
       ) : const SizedBox(),
-      backgroundColor: Theme.of(context).cardColor,
+      backgroundColor:ColorResources.COLOR_WHITE,
       elevation: 0,
     );
   }

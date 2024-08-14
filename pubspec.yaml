@@ -72,3 +72,9 @@ flutter:
           weight: 500
         - asset: assets/fonts/Rubik-Bold.ttf
           weight: 700
+
+    - family: Aeonik
+      fonts:
+        - asset: assets/fonts/AeonikTRIAL-Regular.otf
+          weight: 400
+        - asset: assets/fonts/AeonikTRIAL-Bold.otf        

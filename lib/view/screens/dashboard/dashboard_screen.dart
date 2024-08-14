@@ -46,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor:ColorResources.COLOR_PRIMARY,
           unselectedItemColor: Theme.of(context).hintColor.withOpacity(0.7),
-          backgroundColor: Theme.of(context).cardColor,
+          backgroundColor: ColorResources.COLOR_WHITE,
           showUnselectedLabels: true,
           currentIndex: _pageIndex,
           type: BottomNavigationBarType.fixed,

@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
     checkPermission(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: ColorResources.SEARCH_BG,
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: Colors.white,

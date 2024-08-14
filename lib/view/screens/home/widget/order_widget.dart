@@ -23,8 +23,8 @@ class OrderWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeDefault),
       decoration: BoxDecoration(
-          boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(.7), spreadRadius: 2, blurRadius: 2, offset: const Offset(0, 1))],
-          color: Theme.of(context).cardColor,
+          boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(.1), spreadRadius: 2, blurRadius: 2, offset: const Offset(0, 1))],
+          color: ColorResources.COLOR_WHITE,
           borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall)),
       child: Column(
         children: [
@@ -35,11 +35,11 @@ class OrderWidget extends StatelessWidget {
                 children: [
                   Text(
                     getTranslated('order_id', context)!,
-                    style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
+                    // style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
                   ),
                   Text(
                     ' # ${orderModel!.id.toString()}',
-                    style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
+                    // style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
                   ),
                 ],
               ),
@@ -86,12 +86,12 @@ class OrderWidget extends StatelessWidget {
           const SizedBox(height: 25),
           Row(
             children: [
-              Image.asset(Images.location, color: Theme.of(context).textTheme.bodyLarge!.color, width: 15, height: 20),
+              Image.asset(Images.location,color:ColorResources.COLOR_BLACK,height: 15,width: 15,),
               const SizedBox(width: 10),
               Expanded(
                   child: Text(
                 orderModel!.deliveryAddress != null ? orderModel!.deliveryAddress!.address! : 'Address not found',
-                style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
+                // style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
               )),
             ],
           ),
