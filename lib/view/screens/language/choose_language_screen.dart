@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:resturant_delivery_boy/data/model/response/language_model.dart';
-import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/provider/language_provider.dart';
 import 'package:resturant_delivery_boy/provider/localization_provider.dart';
 import 'package:resturant_delivery_boy/utill/app_constants.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
-import 'package:resturant_delivery_boy/view/base/custom_snackbar.dart';
 import 'package:resturant_delivery_boy/view/screens/auth/login_screen.dart';
 
 class ChooseLanguageScreen extends StatelessWidget {
@@ -59,38 +57,6 @@ class ChooseLanguageScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorResources.COLOR_PRIMARY,
-                    foregroundColor: Colors.white, // Set the text color to white
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (languageProvider.languages.isNotEmpty && languageProvider.selectIndex != -1) {
-                      Provider.of<LocalizationProvider>(context, listen: false).setLanguage(
-                        Locale(
-                          AppConstants.languages[languageProvider.selectIndex!].languageCode!,
-                          AppConstants.languages[languageProvider.selectIndex!].countryCode,
-                        ),
-                      );
-                      if (fromHomeScreen) {
-                        Navigator.pop(context);
-                      } else {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
-                      }
-                    } else {
-                      showCustomSnackBar(getTranslated('select_a_language', context)!);
-                    }
-                  },
-                  child: SizedBox(
-                    width: double.infinity, // Full width button
-                    child: Center(
-                      child: Text(getTranslated('save', context)!),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -105,9 +71,25 @@ class ChooseLanguageScreen extends StatelessWidget {
     required LanguageProvider languageProvider,
     int? index,
   }) {
+    bool isSelected = languageProvider.selectIndex == index;
+
     return InkWell(
       onTap: () {
         languageProvider.changeSelectIndex(index);
+        Provider.of<LocalizationProvider>(context, listen: false).setLanguage(
+          Locale(
+            AppConstants.languages[languageProvider.selectIndex!].languageCode!,
+            AppConstants.languages[languageProvider.selectIndex!].countryCode,
+          ),
+        );
+
+        if (fromHomeScreen) {
+          Navigator.pop(context);
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -126,14 +108,26 @@ class ChooseLanguageScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              languageProvider.selectIndex == index
-                  ? Image.asset(
-                      Images.done,
-                      width: 17,
-                      height: 17,
-                      color: ColorResources.COLOR_PRIMARY,
-                    )
-                  : const SizedBox.shrink(),
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: isSelected ? ColorResources.COLOR_PRIMARY: Colors.grey),
+                ),
+                child: Center(
+                  child: isSelected
+                      ? Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            color: ColorResources.COLOR_PRIMARY,
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ),
             ],
           ),
         ),

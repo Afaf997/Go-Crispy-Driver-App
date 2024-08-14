@@ -72,7 +72,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
             color: ColorResources.kGrayLogo,
-            // border: Border.all(color: widget.isShowBorder ? Theme.of(context).hintColor.withOpacity(0.5) : Colors.transparent),
         ),
         child: TextField(
           maxLines: widget.maxLines,
