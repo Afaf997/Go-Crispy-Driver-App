@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
     checkPermission(context);
 
     return Scaffold(
-      backgroundColor: ColorResources.SEARCH_BG,
+      backgroundColor: ColorResources.COLOR_WHITE,
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: Colors.white,
@@ -72,7 +72,6 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(width: Dimensions.paddingSizeLarge),
                     Text(
                       getTranslated('change_language', context)!,
-                      style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
                     ),
                   ],
                 ),
@@ -104,7 +103,7 @@ class HomeScreen extends StatelessWidget {
                           ? '${profileProvider.userInfoModel!.fName ?? ''} ${profileProvider.userInfoModel!.lName ?? ''}'
                           : "",
                       style:
-                          Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge!.color),
+                          Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: Dimensions.fontSizeLarge, fontWeight: FontWeight.w600,color: Theme.of(context).textTheme.bodyLarge!.color),
                     )
                   ],
                 )

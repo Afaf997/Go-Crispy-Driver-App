@@ -8,6 +8,7 @@ import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/provider/chat_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
+import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
@@ -44,7 +45,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.orderModel!.customer!.fName!} ${widget.orderModel!.customer!.lName!}'),backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(title: Text('${widget.orderModel!.customer!.fName!} ${widget.orderModel!.customer!.lName!}',style:const TextStyle(color: ColorResources.COLOR_WHITE),),backgroundColor: ColorResources.COLOR_PRIMARY,
+        iconTheme: const IconThemeData(
+    color: ColorResources.COLOR_WHITE, // Change back arrow color to white
+  ),
+
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),

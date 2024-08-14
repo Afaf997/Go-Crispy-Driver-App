@@ -81,7 +81,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorResources.SEARCH_BG,
+      backgroundColor: ColorResources.COLOR_WHITE,
       appBar: AppBar(
         backgroundColor:ColorResources.COLOR_WHITE,
         elevation: 0,
@@ -192,7 +192,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     Container(
                       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                       decoration: BoxDecoration(
-                        color: ColorResources.SEARCH_BG,
+                        color: ColorResources.COLOR_WHITE,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [BoxShadow(
                           color: Theme.of(context).shadowColor,
@@ -236,7 +236,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             } : null,
                             child: Container(
                               padding: const EdgeInsets.all(Dimensions.fontSizeLarge),
-                              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).shadowColor),
+                              decoration:const BoxDecoration(shape: BoxShape.circle, color:ColorResources.COLOR_WHITE),
                               child:  Icon(Icons.call_outlined, color: Theme.of(context).textTheme.bodyLarge?.color),
                             ),
                           ),

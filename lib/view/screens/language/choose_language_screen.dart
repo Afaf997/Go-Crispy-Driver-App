@@ -102,9 +102,11 @@ class ChooseLanguageScreen extends StatelessWidget {
                 children: [
                   Text(
                     languageModel.languageName!,
-                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                          color: Theme.of(context).textTheme.bodyLarge!.color,
-                        ),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+  color: Theme.of(context).textTheme.bodyMedium!.color,
+  fontWeight: FontWeight.bold, 
+),
+
                   ),
                 ],
               ),

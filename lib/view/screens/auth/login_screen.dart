@@ -79,11 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 35),
                 Text(
                   getTranslated('email_address', context)!,
-                  style: Theme.of(context).textTheme.displayMedium!,
                 ),
                 const SizedBox(height: Dimensions.paddingSizeSmall),
                 CustomTextField(
-                  hintText: getTranslated('demo_gmail', context),
+                  hintText: getTranslated('Email Id', context),
                   isShowBorder: true,
                   focusNode: _emailFocus,
                   nextFocus: _passwordFocus,
@@ -93,11 +92,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: Dimensions.paddingSizeLarge),
                 Text(
                   getTranslated('password', context)!,
-                  style: Theme.of(context).textTheme.displayMedium!,
                 ),
                 const SizedBox(height: Dimensions.paddingSizeSmall),
                 CustomTextField(
-                  hintText: getTranslated('password_hint', context),
+                  hintText: getTranslated('Password', context),
                   isShowBorder: true,
                   isPassword: true,
                   isShowSuffixIcon: true,
@@ -194,30 +192,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                         },
                       )
-                    : Center(
+                    :const Center(
                         child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY),
                       )),
 
 
                 const SizedBox(height: 10),
-
-               splashProvider.configModel!.toggleDmRegistration! ? Center(
-                 child: RichText(
-                   text: TextSpan(
-                     children: [
-                       TextSpan(
-                         text: '${getTranslated('join_as_a', context)} ',
-                         style: rubikRegular.copyWith(color: Theme.of(context).disabledColor),
-                       ),
-                       TextSpan(
-                         text: getTranslated('delivery_man', context),
-                         style: rubikMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
-                       ),
-                     ],
-                   ),
-                 ),
-               ) : const SizedBox()
 
               ],
             ),

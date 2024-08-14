@@ -18,7 +18,7 @@ class OrderHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<OrderProvider>(context, listen: false).getOrderHistory(context);
     return Scaffold(
-      backgroundColor: ColorResources.SEARCH_BG,
+      backgroundColor: ColorResources.COLOR_WHITE,
       appBar: AppBar(
         leading: const SizedBox.shrink(),
         centerTitle: true,
