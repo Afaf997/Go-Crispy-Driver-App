@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
+// import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/main.dart';
 import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
-import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
+// import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
@@ -32,12 +32,12 @@ class MyOrderScreen extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              height: 180,
+              height: 190,
               decoration: const BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
                 ),
               ),
               child: Padding(
@@ -69,13 +69,13 @@ class MyOrderScreen extends StatelessWidget {
                             )
                           : const SizedBox.shrink(),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 20),
                     Consumer<ProfileProvider>(
                       builder: (context, profileProvider, child) => profileProvider.userInfoModel != null
                           ? Text(
                               '${profileProvider.userInfoModel!.fName ?? ''} ${profileProvider.userInfoModel!.lName ?? ''}',
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

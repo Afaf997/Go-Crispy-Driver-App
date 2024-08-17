@@ -7,11 +7,9 @@ import 'package:resturant_delivery_boy/provider/splash_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
-import 'package:resturant_delivery_boy/utill/styles.dart';
 import 'package:resturant_delivery_boy/view/base/custom_button.dart';
 import 'package:resturant_delivery_boy/view/base/custom_snackbar.dart';
 import 'package:resturant_delivery_boy/view/base/custom_text_field.dart';
-import 'package:resturant_delivery_boy/view/screens/auth/delivery_man_registration_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/dashboard/dashboard_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _formKeyLogin = GlobalKey<FormState>();
     _emailController = TextEditingController();
@@ -72,10 +69,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Center(
-                    child: Text(
-                  getTranslated('login', context)!,
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 24, color: Theme.of(context).hintColor),
-                )),
+                  child: Text(
+                    getTranslated('login', context)!,
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                      fontSize: 24, 
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 35),
                 Text(
                   getTranslated('email_address', context)!,
@@ -105,65 +106,52 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 22),
 
-                // for remember me section
+                // Remember me section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Consumer<AuthProvider>(
-                        builder: (context, authProvider, child) => InkWell(
-                              onTap: () {
-                                authProvider.toggleRememberMe();
-                              },
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 18,
-                                    height: 18,
-                                    decoration: BoxDecoration(
-                                        color: authProvider.isActiveRememberMe ? Theme.of(context).primaryColor : Theme.of(context).canvasColor,
-                                        border:
-                                            Border.all(color: authProvider.isActiveRememberMe ? Colors.transparent : Theme.of(context).highlightColor),
-                                        borderRadius: BorderRadius.circular(3)),
-                                    child: authProvider.isActiveRememberMe
-                                        ? const Icon(Icons.done, color: Colors.white, size: 17)
-                                        : const SizedBox.shrink(),
-                                  ),
-                                  const SizedBox(width: Dimensions.paddingSizeSmall),
-                                  Text(
-                                    getTranslated('remember_me', context)!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayMedium!
-                                        .copyWith(fontSize: Dimensions.fontSizeExtraSmall),
-                                  )
-                                ],
+                      builder: (context, authProvider, child) => InkWell(
+                        onTap: () {
+                          authProvider.toggleRememberMe();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 18,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                color: authProvider.isActiveRememberMe
+                                    ? Theme.of(context).primaryColor
+                                    : Theme.of(context).canvasColor,
+                                border: Border.all(
+                                  color: authProvider.isActiveRememberMe
+                                      ? Colors.transparent
+                                      : Theme.of(context).highlightColor,
+                                ),
+                                borderRadius: BorderRadius.circular(3),
                               ),
-                            )),
-                  ],
-                ),
-
-                const SizedBox(height: 22),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    authProvider.loginErrorMessage!.isNotEmpty
-                        ? CircleAvatar(backgroundColor: Theme.of(context).primaryColor, radius: 5)
-                        : const SizedBox.shrink(),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        authProvider.loginErrorMessage ?? "",
-                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                              fontSize: Dimensions.fontSizeSmall,
-                              color: Theme.of(context).primaryColor,
+                              child: authProvider.isActiveRememberMe
+                                  ? const Icon(Icons.done, color: Colors.white, size: 17)
+                                  : const SizedBox.shrink(),
                             ),
+                            const SizedBox(width: Dimensions.paddingSizeSmall),
+                            Text(
+                              getTranslated('remember_me', context)!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(fontSize: Dimensions.fontSizeExtraSmall),
+                            ),
+                          ],
+                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
 
-                // for login button
-                const SizedBox(height: 10),
+                const SizedBox(height: 40),
+
                 !authProvider.isLoading
                     ? CustomButton(
                         btnTxt: getTranslated('login', context),
@@ -171,14 +159,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           String email = _emailController!.text.trim();
                           String password = _passwordController!.text.trim();
                           if (email.isEmpty) {
-                            showCustomSnackBar(getTranslated('enter_email_address', context)!);
-                          }else if (EmailChecker.isNotValid(email)) {
-                            showCustomSnackBar(getTranslated('enter_valid_email', context)!);
-                          }else if (password.isEmpty) {
-                            showCustomSnackBar(getTranslated('enter_password', context)!);
-                          }else if (password.length < 6) {
-                            showCustomSnackBar(getTranslated('password_should_be', context)!);
-                          }else {
+                            showCustomNotification(context, getTranslated('enter_email_address', context)!, type: NotificationType.warning);
+                          } else if (EmailChecker.isNotValid(email)) {
+                            showCustomNotification(context, getTranslated('enter_valid_email', context)!, type: NotificationType.warning);
+                          } else if (password.isEmpty) {
+                            showCustomNotification(context, getTranslated('enter_password', context)!, type: NotificationType.warning);
+                          } else if (password.length < 6) {
+                            showCustomNotification(context, getTranslated('password_should_be', context)!, type: NotificationType.warning);
+                          } else {
                             await authProvider.login(emailAddress: email, password: password).then((status) async {
                               if (status.isSuccess) {
                                 if (authProvider.isActiveRememberMe) {
@@ -186,20 +174,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                 } else {
                                   authProvider.clearUserEmailAndPassword();
                                 }
-                                await Navigator.of(Get.context!).pushReplacement(MaterialPageRoute(builder: (_) => const DashboardScreen()));
+                                await Navigator.of(Get.context!).pushReplacement(
+                                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                                );
+                              } else if (authProvider.loginErrorMessage!.isNotEmpty) {
+                                showCustomNotification(
+                                  context,
+                                  getTranslated('Invalid email or password. Please try again.', context)!,
+                                  type: NotificationType.error,
+                                );
                               }
                             });
                           }
                         },
                       )
-                    :const Center(
+                    : const Center(
                         child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY),
-                      )),
-
-
+                          valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY),
+                        ),
+                      ),
                 const SizedBox(height: 10),
-
               ],
             ),
           ),

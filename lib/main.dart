@@ -15,10 +15,7 @@ import 'package:resturant_delivery_boy/provider/language_provider.dart';
 import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
-import 'package:resturant_delivery_boy/provider/theme_provider.dart';
 import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
-import 'package:resturant_delivery_boy/theme/dark_theme.dart';
-import 'package:resturant_delivery_boy/theme/light_theme.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/view/screens/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +50,6 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => di.sl<ThemeProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SplashProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LanguageProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LocalizationProvider>()),

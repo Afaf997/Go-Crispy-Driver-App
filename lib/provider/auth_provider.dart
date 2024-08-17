@@ -14,8 +14,6 @@ import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/main.dart';
 import 'package:resturant_delivery_boy/view/base/custom_snackbar.dart';
 import 'package:http/http.dart' as http;
-
-
 import 'splash_provider.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -195,7 +193,11 @@ class AuthProvider with ChangeNotifier {
     http.Response ? apiResponse = await authRepo?.registerDeliveryMan(deliveryManBody, multiParts);
     if (apiResponse != null  && apiResponse.statusCode == 200) {
       Navigator.of(Get.context!).pop();
-      showCustomSnackBar(getTranslated('delivery_man_registration_successful', Get.context!)!, isError: false);
+      showCustomNotification(
+     Get.context!, // BuildContext
+     getTranslated('delivery_man_registration_successful', Get.context!)!, // String message
+     type: NotificationType.success,
+);
     } else {
       dynamic errorResponse;
       try{
@@ -203,7 +205,7 @@ class AuthProvider with ChangeNotifier {
       }catch(er){
         errorResponse = apiResponse?.body;
       }
-      showCustomSnackBar(errorResponse);
+      showCustomNotification(Get.context!,errorResponse  );
     }
     _isLoading = false;
     notifyListeners();

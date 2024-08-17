@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:resturant_delivery_boy/provider/profile_provider.dart';
+import 'package:resturant_delivery_boy/provider/splash_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
+import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/order/order_details_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -7,6 +11,7 @@ class HomeScreen extends StatelessWidget {
 
 @override
   Widget build(BuildContext context) {
+  Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
     return Scaffold(
       backgroundColor: ColorResources.kbackgroundColor,
       body: Stack(
@@ -54,12 +59,33 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                     const Row(
+                      Row(
                         children: [
-                          CircleAvatar(
-                            radius: 35,
-                            // backgroundImage: AssetImage(Images.profile),
-                          ),
+                          Consumer<ProfileProvider>(
+                      builder: (context, profileProvider, child) => profileProvider.userInfoModel != null
+                          ? Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle, // Ensures the image is round
+                              ),
+                              child: ClipOval( // Use ClipOval to make the image round
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: Images.placeholderUser,
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.cover,
+                                  image:
+                                      '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.deliveryManImageUrl}/${profileProvider.userInfoModel!.image}',
+                                  imageErrorBuilder: (c, o, s) => Image.asset(
+                                    Images.placeholderUser,
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                           SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,22 +98,18 @@ class HomeScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              Text(
-                                'Nidal Zubair',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                             Consumer<ProfileProvider>(
+                      builder: (context, profileProvider, child) => profileProvider.userInfoModel != null
+                          ? Text(
+                              '${profileProvider.userInfoModel!.fName ?? ''} ${profileProvider.userInfoModel!.lName ?? ''}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                              Text(
-                                'nigocrispy@gmail.com',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                             ],
                           ),
                         ],

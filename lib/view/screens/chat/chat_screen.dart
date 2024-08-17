@@ -203,7 +203,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver{
                             });
                             Provider.of<ChatProvider>(context, listen: false).toggleSendButtonActivity();
                           }else{
-                            showCustomSnackBar(getTranslated('write_some_thing', context)!);
+                            showCustomNotification(context,getTranslated('write_some_thing', context)!,type: NotificationType.warning);
                           }
 
                         },

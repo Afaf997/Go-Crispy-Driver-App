@@ -7,7 +7,6 @@ import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
-import 'package:resturant_delivery_boy/view/base/status_widget.dart';
 import 'package:resturant_delivery_boy/view/screens/html/html_viewer_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/profile/widget/profile_button.dart';
 
@@ -28,15 +27,22 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  color:ColorResources.COLOR_PRIMARY,
+                 decoration: const BoxDecoration(
+                   color: ColorResources.COLOR_BLACK,
+                   borderRadius: BorderRadius.only(
+                     bottomLeft: Radius.circular(24), 
+                     bottomRight: Radius.circular(24), 
+                   ),
+  ),
                   width: MediaQuery.of(context).size.width,
+                  
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       const SizedBox(height: 10),
                       Text(
                         getTranslated('my_profile', context)!,
-                        style: rubikRegular.copyWith(fontSize: Dimensions.fontSizeLarge, color: Colors.white),
+                        style: rubikRegular.copyWith(fontSize:18, color: Colors.white,fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 30),
                       Container(
@@ -55,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
                             ? '${profileProvider.userInfoModel!.fName ?? ''} ${profileProvider.userInfoModel!.lName ?? ''}'
                             : "",
                         style: rubikRegular.copyWith(
-                          fontSize: Dimensions.fontSizeExtraLarge,
+                          fontSize: Dimensions.fontSizeLarge,
                           color: Colors.white,
                         ),
                       ),

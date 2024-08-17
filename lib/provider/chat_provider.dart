@@ -69,7 +69,7 @@ class ChatProvider with ChangeNotifier {
       getChatMessages(orderId);
       _isLoading= false;
     } else {
-      showCustomSnackBar('write something...');
+      showCustomNotification(context,'write something...', type: NotificationType.warning, );
     }
     _imageFile = [];
     _isLoading= false;
