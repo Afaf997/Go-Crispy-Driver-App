@@ -23,7 +23,7 @@ class OrderWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-        margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeDefault),
+        margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
         decoration: BoxDecoration(
             boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(.1), spreadRadius: 2, blurRadius: 2, offset: const Offset(0, 1))],
             color: ColorResources.COLOR_WHITE,

@@ -47,9 +47,10 @@ class MyOrderScreen extends StatelessWidget {
                     Consumer<ProfileProvider>(
                       builder: (context, profileProvider, child) => profileProvider.userInfoModel != null
                           ? Container(
-                              decoration: const BoxDecoration(shape: BoxShape.circle),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle, // Ensures the image is round
+                              ),
+                              child: ClipOval( // Use ClipOval to make the image round
                                 child: FadeInImage.assetNetwork(
                                   placeholder: Images.placeholderUser,
                                   width: 70,
@@ -87,11 +88,12 @@ class MyOrderScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
               child: Text(
                 getTranslated('active_order', context)!,
                 style: Theme.of(context).textTheme.displaySmall!.copyWith(
                   fontSize: Dimensions.fontSizeLarge,
+                  fontWeight: FontWeight.w600,
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
