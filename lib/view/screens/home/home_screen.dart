@@ -1,188 +1,357 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
-import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
-import 'package:resturant_delivery_boy/localization/language_constrants.dart';
-import 'package:resturant_delivery_boy/main.dart';
-import 'package:resturant_delivery_boy/provider/order_provider.dart';
-import 'package:resturant_delivery_boy/provider/profile_provider.dart';
-import 'package:resturant_delivery_boy/provider/splash_provider.dart';
-import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
-import 'package:resturant_delivery_boy/utill/dimensions.dart';
-import 'package:resturant_delivery_boy/utill/images.dart';
-import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
-import 'package:resturant_delivery_boy/view/screens/language/choose_language_screen.dart';
-import 'package:resturant_delivery_boy/view/screens/order/widget/permission_dialog.dart';
+import 'package:resturant_delivery_boy/view/screens/order/order_details_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  const HomeScreen({Key? key}) : super(key: key);
 
-  HomeScreen({Key? key}) : super(key: key);
-
-  @override
+@override
   Widget build(BuildContext context) {
-    Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
-    Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
-    checkPermission(context);
-
     return Scaffold(
-      backgroundColor: ColorResources.COLOR_WHITE,
-      appBar: AppBar(
-        toolbarHeight: 80,
-        backgroundColor: Colors.white,
-        leadingWidth: 0,
-        actions: [
-          Consumer<OrderProvider>(
-            builder: (context, orderProvider, child) {
-              if(orderProvider.currentOrders.isNotEmpty) {
-                for(OrderModel order in orderProvider.currentOrders) {
-                  if(order.orderStatus == 'out_for_delivery') {
-                    Provider.of<TrackerProvider>(context, listen: false).setOrderID(order.id!);
-                    Provider.of<TrackerProvider>(context, listen: false).startLocationService();
-                    break;
-                  }
-                }
-              }
-              return orderProvider.currentOrders.isNotEmpty
-                  ? const SizedBox.shrink()
-                  : IconButton(icon: Icon(Icons.refresh, color: Theme.of(context).textTheme.bodyLarge!.color),
-                  onPressed: () {
-                    orderProvider.refresh(context);
-                  });
-            },
-          ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              switch (value) {
-                case 'language':
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChooseLanguageScreen(fromHomeScreen: true)));
-              }
-            },
-            icon: Icon(
-              Icons.more_vert_outlined,
-              color: Theme.of(context).textTheme.bodyLarge!.color,
-            ),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'language',
-                child: Row(
-                  children: [
-                    Icon(Icons.language, color: Theme.of(context).textTheme.bodyLarge!.color),
-                    const SizedBox(width: Dimensions.paddingSizeLarge),
-                    Text(
-                      getTranslated('change_language', context)!,
-                    ),
-                  ],
+      backgroundColor: ColorResources.kbackgroundColor,
+      body: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 238,
+                decoration:const BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                     const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                         const Icon(Icons.circle, color: Colors.green, size: 12),
+                         const SizedBox(width: 5),
+                        const  Text(
+                            'Online',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Transform.scale(
+                            scale: 0.7,
+                            child: Switch(
+                              value: true,
+                              onChanged: (bool newValue) {},
+                              activeColor: ColorResources.COLOR_WHITE,
+                              activeTrackColor: ColorResources.COLOR_PRIMARY,
+                            ),
+                          ),
+                        ],
+                      ),
+                     const Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 35,
+                            // backgroundImage: AssetImage(Images.profile),
+                          ),
+                          SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Nidal Zubair',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'nigocrispy@gmail.com',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Divider(thickness: 0.2),
+                    ],
+                  ),
                 ),
               ),
             ],
-          )
+          ),
+          Positioned(
+            top: 180,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildStatistics(),
+                  SizedBox(height: 11),
+                  _buildActiveOrdersTitle(),
+                  SizedBox(height: 8),
+                  _buildActiveOrderCard(
+                    orderId: 'Order ID #00131',
+                    location: 'Go Crispy, Al Muntazah Branch',
+                    status: 'Pending',
+                    statusColor: ColorResources.kborderyellowColor,
+                    onConfirm: () {},
+                    onViewDetails: () {},
+                    onTakeMeThere: () {},
+                  ),
+                  SizedBox(height: 8),
+                  _buildActiveOrderCard(
+                    orderId: 'Order ID #00131',
+                    location: 'Go Crispy, Al Muntazah Branch',
+                    status: 'Completed',
+                    statusColor: Colors.green,
+                    onConfirm: () {},
+                    onViewDetails: () {},
+                    onTakeMeThere: () {},
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
-        leading: const SizedBox.shrink(),
-        title: Consumer<ProfileProvider>(
-          builder: (context, profileProvider, child) => profileProvider.userInfoModel != null
-              ? Row(
-                  children: [
-                    Container(
-                      decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: FadeInImage.assetNetwork(
-                          placeholder: Images.placeholderUser, width: 40, height: 40, fit: BoxFit.fill,
-                          image: '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.deliveryManImageUrl}/${profileProvider.userInfoModel!.image}',
-                          imageErrorBuilder: (c, o, s) => Image.asset(Images.placeholderUser, width: 40, height: 40, fit: BoxFit.fill),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      profileProvider.userInfoModel!.fName != null
-                          ? '${profileProvider.userInfoModel!.fName ?? ''} ${profileProvider.userInfoModel!.lName ?? ''}'
-                          : "",
-                      style:
-                          Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: Dimensions.fontSizeLarge, fontWeight: FontWeight.w600,color: Theme.of(context).textTheme.bodyLarge!.color),
-                    )
-                  ],
-                )
-              : const SizedBox.shrink(),
-        ),
       ),
-      body: Consumer<OrderProvider>(
-          builder: (context, orderProvider, child) => Padding(
-                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(getTranslated('active_order', context)!, style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      fontSize: Dimensions.fontSizeLarge,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    )),
-                    const SizedBox(height: 15),
-
-                    Expanded(
-                      child: RefreshIndicator(
-                        key: _refreshIndicatorKey,
-                        displacement: 0,
-                        color: ColorResources.COLOR_PRIMARY,
-                        backgroundColor:ColorResources.COLOR_WHITE,
-                        onRefresh: () {
-                          return orderProvider.refresh(context);
-                        },
-                        child: orderProvider.currentOrders.isNotEmpty
-                            ? orderProvider.currentOrders.isNotEmpty
-                                ? ListView.builder(
-                                    itemCount: orderProvider.currentOrders.length,
-                                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                                    itemBuilder: (context, index) => OrderWidget(
-                                      orderModel: orderProvider.currentOrders[index],
-                                      index: index,
-                                    ),
-                                  )
-                                : Center(
-                                    child: Text(
-                                      getTranslated('no_order_found', context)!,
-                                      style: Theme.of(context).textTheme.displaySmall,
-                                    ),
-                                  )
-                            : const SizedBox.shrink(),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
     );
   }
 
-  static void checkPermission(BuildContext context, {Function? callBack}) async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if(permission == LocationPermission.denied) {
-      showDialog(context: Get.context!, barrierDismissible: false, builder: (ctx) => PermissionDialog(isDenied: true, onPressed: () async {
-        Navigator.pop(context);
-        await Geolocator.requestPermission();
-        if(callBack != null) {
-          checkPermission(Get.context!, callBack: callBack);
-        }
-
-      }));
-    }else if(permission == LocationPermission.deniedForever) {
-      showDialog(context: Get.context!, barrierDismissible: false, builder: (context) => PermissionDialog(isDenied: false, onPressed: () async {
-        Navigator.pop(context);
-        await Geolocator.openAppSettings();
-        if(callBack != null) {
-          checkPermission(Get.context!, callBack: callBack);
-        }
-
-      }));
-    }else if(callBack != null){
-      callBack();
-    }
+  Widget _buildStatistics() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildStatCard(
+              title: 'Total Orders',
+              count: '132',
+              color: ColorResources.COLOR_PRIMARY,
+              width: 169,
+              height: 160,
+              countFontSize: 64,
+            ),
+            Column(
+              children: [
+                _buildStatCard(
+                  title: 'Completed',
+                  count: '130',
+                  color: ColorResources.kbordergreenColor,
+                  width: 170,
+                  height: 76,
+                  countFontSize: 40,
+                ),
+                SizedBox(height: 8),
+                _buildStatCard(
+                  title: 'Pending',
+                  count: '02',
+                  color: ColorResources.kborderyellowColor,
+                  width: 170,
+                  height: 76,
+                  countFontSize: 40,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
+  Widget _buildActiveOrdersTitle() {
+    return Text(
+      'Active Orders',
+      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+    );
+  }
 
+Widget _buildActiveOrderCard({
+  required String orderId,
+  required String location,
+  required String status,
+  required Color statusColor,
+  required VoidCallback onConfirm,
+  required VoidCallback onViewDetails,
+  required VoidCallback onTakeMeThere,
+}) {
+  return Builder(
+    builder: (BuildContext context) {
+      return Container(
+        height: 135,
+        width: MediaQuery.of(context).size.width * 0.9, // Adjust width based on screen width
+        decoration: BoxDecoration(
+          color: ColorResources.COLOR_WHITE,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    orderId,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: statusColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        status,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  // Image.asset(Images.location),
+                  SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      location,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder:(context)=>const OrderDetailsScreen()));
+                    },
+                    child:const Text(
+                      'View Details',
+                      style: TextStyle(color: ColorResources.kborderyellowColor, fontSize: 12),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:ColorResources.kboarder,
+                      minimumSize: Size(MediaQuery.of(context).size.width * 0.25, 40), 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: const BorderSide(color:ColorResources.ktakeColor),
+                      ),
+                    ),
+                    onPressed: onTakeMeThere,
+                    child:const Text(
+                      'Take me there',
+                      style: TextStyle(color: ColorResources.COLOR_PRIMARY, fontSize: 12),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: onConfirm,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(MediaQuery.of(context).size.width * 0.25, 40), // Adjust minimum size based on screen width
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor:
+                          status == 'Pending' ? ColorResources.kbordergreenColor : ColorResources.COLOR_PRIMARY,
+                    ),
+                    child: Text(
+                      status == 'Pending' ? 'Confirm' : 'Cancel',
+                      style: TextStyle(fontSize: 12, color: ColorResources.COLOR_WHITE),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+  Widget _buildStatCard({
+    required String title,
+    required String count,
+    required Color color,
+    required double width,
+    required double height,
+    double countFontSize = 28,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: 5,
+            left: 10,
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            right: 10,
+            child: Text(
+              count,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: countFontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

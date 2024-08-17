@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/view/screens/home/home_screen.dart';
+import 'package:resturant_delivery_boy/view/screens/myOrder/my_order_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/order/order_history_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/profile/profile_screen.dart';
 
@@ -25,6 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     _screens = [
       HomeScreen(),
+      MyOrderScreen(),
       OrderHistoryScreen(),
       const ProfileScreen(),
     ];
@@ -52,8 +54,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           type: BottomNavigationBarType.fixed,
           items: [
             _barItem(Icons.home, getTranslated('home', context), 0),
-            _barItem(Icons.history, getTranslated('order_history', context), 1),
-            _barItem(Icons.person, getTranslated('profile', context), 2),
+             _barItem(Icons.shopping_bag_outlined, getTranslated('my_order', context), 1),
+            _barItem(Icons.history, getTranslated('order_history', context), 2),
+            _barItem(Icons.person, getTranslated('profile', context), 3),
           ],
           onTap: (int index) {
             _setPage(index);

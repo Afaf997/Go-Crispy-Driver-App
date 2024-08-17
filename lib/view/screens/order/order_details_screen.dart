@@ -23,6 +23,7 @@ import 'package:resturant_delivery_boy/view/base/custom_button.dart';
 import 'package:resturant_delivery_boy/view/screens/chat/chat_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/home/home_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
+import 'package:resturant_delivery_boy/view/screens/myOrder/my_order_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/order/order_place_screen.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/custom_divider.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/delivery_dialog.dart';
@@ -576,7 +577,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     textDirection: TextDirection.ltr,
                     child: SliderButton(
                       action: () {
-                        HomeScreen.checkPermission(context,callBack: () {
+                        MyOrderScreen.checkPermission(context,callBack: () {
                           Provider.of<TrackerProvider>(context, listen: false).setOrderID(orderModel!.id!);
                           Provider.of<TrackerProvider>(context, listen: false).startLocationService();
                           String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
