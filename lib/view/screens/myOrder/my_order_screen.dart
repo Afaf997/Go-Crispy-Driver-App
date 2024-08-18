@@ -12,6 +12,7 @@ import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
+import 'package:resturant_delivery_boy/view/screens/myOrder/widget/orders_widget.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/permission_dialog.dart';
 
 class MyOrderScreen extends StatelessWidget {
@@ -93,7 +94,7 @@ class MyOrderScreen extends StatelessWidget {
                 getTranslated('active_order', context)!,
                 style: Theme.of(context).textTheme.displaySmall!.copyWith(
                   fontSize: Dimensions.fontSizeLarge,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w600, 
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
@@ -119,7 +120,6 @@ class MyOrderScreen extends StatelessWidget {
                     : Center(
                         child: Text(
                           getTranslated('no_order_found', context)!,
-                          style: Theme.of(context).textTheme.displaySmall,
                         ),
                       ),
               ),

@@ -28,6 +28,7 @@ class ColorResources {
   static const Color COLOR_GREY_CHATEAU = Color(0xffA0A4A8);
   static const Color BORDER_COLOR = Color(0xFFDCDCDC);
   static const Color DISABLE_COLOR = Color(0xFF979797);
+  static const Color Boarder_COLOR = Color(0xFFD6D6D6);
   static Color getHintColor(BuildContext context) {
     return Provider.of<ThemeProvider>(context).darkTheme ? Color(0xFF98a1ab) : Color(0xFF52575C);
   }
