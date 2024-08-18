@@ -191,7 +191,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             _buildStatCard(
               title: 'Total Orders',
-              count: 
+              count: '132',
               color: ColorResources.COLOR_PRIMARY,
               width: 169,
               height: 160,
@@ -201,7 +201,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 _buildStatCard(
                   title: 'Completed',
-                  count: 
+                  count: '130',
                   color: ColorResources.kbordergreenColor,
                   width: 170,
                   height: 78,
@@ -210,7 +210,7 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 _buildStatCard(
                   title: 'Pending',
-                  count: 
+                  count: '102',
                   color: ColorResources.kborderyellowColor,
                   width: 170,
                   height: 78,
