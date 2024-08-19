@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final SplashProvider splashProvider = Provider.of<SplashProvider>(context, listen: false);
+    Provider.of<SplashProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: ColorResources.COLOR_WHITE,

@@ -27,7 +27,7 @@ class CustomNotificationOverlay {
     OverlayState? overlayState = Overlay.of(context);
     OverlayEntry overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        bottom: 90.0, // Adjusted to start from the top
+        bottom: 100.0, // Adjusted to start from the top
         left: MediaQuery.of(context).size.width * 0.1,
         right: MediaQuery.of(context).size.width * 0.1,
         child: Material(
@@ -42,7 +42,7 @@ class CustomNotificationOverlay {
       ),
     );
 
-    overlayState?.insert(overlayEntry);
+    overlayState.insert(overlayEntry);
 
     Future.delayed(const Duration(seconds: 3), () {
       overlayEntry.remove();
