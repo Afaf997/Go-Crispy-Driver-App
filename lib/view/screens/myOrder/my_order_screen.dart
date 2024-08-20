@@ -114,10 +114,8 @@ class MyOrderScreen extends StatelessWidget {
                           index: index,
                         ),
                       )
-                    : Center(
-                        child: Text(
-                          getTranslated('no_order_found', context)!,
-                        ),
+                    :const Center(
+                        child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
                       ),
               ),
             ),
