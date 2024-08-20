@@ -23,7 +23,7 @@ class MyOrderScreen extends StatelessWidget {
     checkPermission(context);
 
     return Scaffold(
-      backgroundColor: ColorResources.COLOR_WHITE,
+      backgroundColor: ColorResources.kbackgroundColor,
       body: Consumer<OrderProvider>(
         builder: (context, orderProvider, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,

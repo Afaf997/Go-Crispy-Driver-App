@@ -18,7 +18,7 @@ class OrderHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<OrderProvider>(context, listen: false).getOrderHistory(context);
     return Scaffold(
-      backgroundColor: ColorResources.COLOR_WHITE,
+      backgroundColor: ColorResources.kbackgroundColor,
       appBar: AppBar(
         leading: const SizedBox.shrink(),
         centerTitle: true,
@@ -26,7 +26,7 @@ class OrderHistoryScreen extends StatelessWidget {
         backgroundColor:ColorResources.COLOR_WHITE,
         title: Text(
           getTranslated('order_history', context)!,
-          style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_BLACK, fontSize: Dimensions.fontSizeLarge,fontWeight: FontWeight.w600),
+          style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_BLACK, fontSize: Dimensions.fontSizeExtraLarge,fontWeight: FontWeight.w600),
         ),
       ),
       body: Consumer<OrderProvider>(
@@ -51,10 +51,6 @@ class OrderHistoryScreen extends StatelessWidget {
                                 margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
                                 decoration: BoxDecoration(
                                   color: ColorResources.COLOR_WHITE,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Theme.of(context).shadowColor.withOpacity(.2), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1))
-                                  ],
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

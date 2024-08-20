@@ -97,7 +97,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         ),
         title: Text(
           getTranslated('order_details', context)!,
-          style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).textTheme.bodyLarge!.color),
+          style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).textTheme.bodyLarge!.color,fontWeight: FontWeight.w600),
         ),
       ),
       body: Consumer<OrderProvider>(

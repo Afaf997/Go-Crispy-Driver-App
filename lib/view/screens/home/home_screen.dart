@@ -157,7 +157,7 @@ class HomeScreen extends StatelessWidget {
               },
               child: orderProvider.currentOrders.isNotEmpty
                   ? ListView.builder(
-                      itemCount: orderProvider.currentOrders.length,
+                      itemCount: 5,
                       physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                       itemBuilder: (context, index) => HomeOrderWidget(
                         orderModel: orderProvider.currentOrders[index],
