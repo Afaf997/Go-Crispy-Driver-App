@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
-import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
+import 'package:resturant_delivery_boy/provider/status_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
@@ -17,7 +17,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch user info and status info
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
+    Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
 
     return Scaffold(
       backgroundColor: ColorResources.kbackgroundColor,
@@ -133,92 +135,105 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           Positioned(
-  top: 180,
-  left: 0,
-  right: 0,
-  child: Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildStatistics(context),
-        const SizedBox(height: 11),
-        _buildActiveOrdersTitle(),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: MediaQuery.of(context).size.height - 400, 
-          child: Consumer<OrderProvider>(
-            builder: (context, orderProvider, child) => RefreshIndicator(
-              key: _refreshIndicatorKey,
-              color: ColorResources.COLOR_PRIMARY,
-              backgroundColor: ColorResources.COLOR_WHITE,
-              onRefresh: () {
-                return orderProvider.refresh(context);
-              },
-              child: orderProvider.currentOrders.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: 5,
-                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                      itemBuilder: (context, index) => HomeOrderWidget(
-                        orderModel: orderProvider.currentOrders[index],
-                        index: index,
+            top: 180,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildStatistics(context), // Update this method to fetch data from StatusProvider
+                  const SizedBox(height: 11),
+                  _buildActiveOrdersTitle(),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height - 400, 
+                    child: Consumer<OrderProvider>(
+                      builder: (context, orderProvider, child) => RefreshIndicator(
+                        key: _refreshIndicatorKey,
+                        color: ColorResources.COLOR_PRIMARY,
+                        backgroundColor: ColorResources.COLOR_WHITE,
+                        onRefresh: () {
+                          return orderProvider.refresh(context);
+                        },
+                        child: orderProvider.currentOrders.isNotEmpty
+                            ? ListView.builder(
+                                itemCount: 5,
+                                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                                itemBuilder: (context, index) => HomeOrderWidget(
+                                  orderModel: orderProvider.currentOrders[index],
+                                  index: index,
+                                ),
+                              )
+                            : const Center(
+                                  child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
+                                ),
                       ),
-                    )
-                  : const Center(
-                        child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
-                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  ),
-),
-
         ],
       ),
     );
   }
 
   Widget _buildStatistics(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildStatCard(
-              title: 'Total Orders',
-              count: '132',
-              color: ColorResources.COLOR_PRIMARY,
-              width: 169,
-              height: 160,
-              countFontSize: 64,
-            ),
-            Column(
-              children: [
-                _buildStatCard(
-                  title: 'Completed',
-                  count: '130',
-                  color: ColorResources.kbordergreenColor,
-                  width: 170,
-                  height: 78,
-                  countFontSize: 38,
-                ),
-                const SizedBox(height: 4),
-                _buildStatCard(
-                  title: 'Pending',
-                  count: '102',
-                  color: ColorResources.kborderyellowColor,
-                  width: 170,
-                  height: 78,
-                  countFontSize: 38,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
+    return Consumer<StatusProvider>(
+      builder: (context, statusProvider, child) {
+        if (statusProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (statusProvider.orderCountModel != null) {
+          final totalOrders = statusProvider.orderCountModel!.allOrders.toString();
+          final completedOrders = statusProvider.orderCountModel!.completedOrders.toString();
+          final pendingOrders = statusProvider.orderCountModel!.pendingOrders.toString();
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildStatCard(
+                    title: 'Total Orders',
+                    count: totalOrders.length.toString(),
+                    color: ColorResources.COLOR_PRIMARY,
+                    width: 169,
+                    height: 160,
+                    countFontSize: 64,
+                  ),
+                  Column(
+                    children: [
+                      _buildStatCard(
+                        title: 'Completed',
+                        count: completedOrders.length.toString(),
+                        color: ColorResources.kbordergreenColor,
+                        width: 170,
+                        height: 78,
+                        countFontSize: 38,
+                      ),
+                      const SizedBox(height: 4),
+                      _buildStatCard(
+                        title: 'Pending',
+                        count: pendingOrders.length.toString(),
+                        color: ColorResources.kborderyellowColor,
+                        width: 170,
+                        height: 78,
+                        countFontSize: 38,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+        } else {
+          return const Center(child: Text('No Data Available'));
+        }
+      },
     );
   }
 
@@ -245,7 +260,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 15,top: 7,),
+        padding: const EdgeInsets.only(left: 15, top: 7,),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

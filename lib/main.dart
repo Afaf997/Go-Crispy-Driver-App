@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:resturant_delivery_boy/helper/notification_helper.dart';
 import 'package:resturant_delivery_boy/provider/chat_provider.dart';
+import 'package:resturant_delivery_boy/provider/status_provider.dart';
 import 'package:resturant_delivery_boy/utill/app_constants.dart';
 import 'package:resturant_delivery_boy/localization/app_localization.dart';
 import 'package:resturant_delivery_boy/provider/auth_provider.dart';
@@ -50,6 +51,7 @@ Future<void> main() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider(create: (context) => di.sl<StatusProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SplashProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LanguageProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LocalizationProvider>()),

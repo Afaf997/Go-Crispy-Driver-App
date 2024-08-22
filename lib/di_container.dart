@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:resturant_delivery_boy/data/repository/auth_repo.dart';
 import 'package:resturant_delivery_boy/data/repository/chat_repo.dart';
+import 'package:resturant_delivery_boy/data/repository/countstatus_repo.dart';
 import 'package:resturant_delivery_boy/data/repository/language_repo.dart';
 import 'package:resturant_delivery_boy/data/repository/order_repo.dart';
 import 'package:resturant_delivery_boy/data/repository/profile_repo.dart';
@@ -13,6 +14,7 @@ import 'package:resturant_delivery_boy/provider/language_provider.dart';
 import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
+import 'package:resturant_delivery_boy/provider/status_provider.dart';
 import 'package:resturant_delivery_boy/provider/theme_provider.dart';
 import 'package:resturant_delivery_boy/provider/time_provider.dart';
 import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
@@ -36,7 +38,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => OrderRepo(dioClient: sl(), sharedPreferences: sl()));
   sl.registerLazySingleton(() => TrackerRepo(dioClient: sl(), sharedPreferences: sl()));
   sl.registerLazySingleton(() => ChatRepo(dioClient: sl(), sharedPreferences: sl()));
-
+  sl.registerLazySingleton(() => StatusRepo(dioClient: sl(), sharedPreferences: sl()));
   // Provider
   sl.registerFactory(() => ThemeProvider(sharedPreferences: sl()));
   sl.registerFactory(() => SplashProvider(splashRepo: sl()));
@@ -48,6 +50,7 @@ Future<void> init() async {
   sl.registerFactory(() => TrackerProvider(trackerRepo: sl()));
   sl.registerFactory(() => ChatProvider(chatRepo: sl()));
   sl.registerFactory(() => TimerProvider());
+  sl.registerFactory(() => StatusProvider(statusRepo: sl()));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
