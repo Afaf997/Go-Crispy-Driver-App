@@ -8,8 +8,9 @@ class AppConstants {
   static const String profileUri = '/api/v1/delivery-man/profile?token=';
   static const String configUri = '/api/v1/config';
   static const String loginUri = '/api/v1/auth/delivery-man/login';
-  static const String deliverymanUri = '/api/v1/delivery-man/deliveryman-status?delivery_man_id=1';
-   static const String orderCountUri = '/api/v1/delivery-man/deliveryman-orders-count?delivery_man_id=1';
+  static const String deliverymanOnlineUri = '/api/v1/delivery-man/deliveryman-status?delivery_man_id=1';
+  static const String deliveryOfflineUri = '/api/v1/delivery-man/deliveryman-status?delivery_man_id=0';
+  static const String orderCountUri = '/api/v1/delivery-man/deliveryman-orders-count?delivery_man_id=1';
   static const String notificationUri = '/api/v1/notifications';
   static const String updateProfileUri = '/api/v1/customer/update-profile';
   static const String currentOrdersUri = '/api/v1/delivery-man/current-orders?token=';

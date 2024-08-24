@@ -5,9 +5,12 @@ import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
 import 'package:resturant_delivery_boy/provider/status_provider.dart';
+import 'package:resturant_delivery_boy/provider/online_provider.dart'; // Add this import
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
+import 'package:resturant_delivery_boy/view/screens/home/widget/state_card.dart';
+import 'package:resturant_delivery_boy/view/screens/home/widget/statistics.dart';
 
 class HomeScreen extends StatelessWidget {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -20,6 +23,8 @@ class HomeScreen extends StatelessWidget {
     // Fetch user info and status info
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
     Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
+    Provider.of<OnlineProvider>(context, listen: false).getInitialStatus(context); 
+     Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context);// Initialize status
 
     return Scaffold(
       backgroundColor: ColorResources.kbackgroundColor,
@@ -47,24 +52,39 @@ class HomeScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Icon(Icons.circle, color: Colors.green, size: 12),
-                          const SizedBox(width: 5),
-                          const Text(
-                            'Online',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Transform.scale(
-                            scale: 0.7,
-                            child: Switch(
-                              value: true,
-                              onChanged: (bool newValue) {},
-                              activeColor: ColorResources.COLOR_WHITE,
-                              activeTrackColor: ColorResources.COLOR_PRIMARY,
-                            ),
+                          Consumer<OnlineProvider>(
+                            builder: (context, onlineProvider, child) {
+                              bool isOnline = onlineProvider.onlineModel?.status == 'online';
+                              return Row(
+                                children: [
+                                  Icon(
+                                    isOnline ? Icons.circle : Icons.circle,
+                                    color: isOnline ? Colors.green : Colors.red,
+                                    size: 12,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    isOnline ? 'Online' : 'Offline',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.7,
+                                    child: Switch(
+                                      value: isOnline,
+                                      onChanged: (bool newValue) {
+                                        onlineProvider.toggleOnlineStatus(context);
+                                      },
+                                      activeColor: ColorResources.COLOR_WHITE,
+                                      activeTrackColor: ColorResources.COLOR_PRIMARY,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -143,12 +163,12 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStatistics(context), // Update this method to fetch data from StatusProvider
+                  buildStatistics(context),
                   const SizedBox(height: 11),
                   _buildActiveOrdersTitle(),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height - 400, 
+                    height: MediaQuery.of(context).size.height - 400,
                     child: Consumer<OrderProvider>(
                       builder: (context, orderProvider, child) => RefreshIndicator(
                         key: _refreshIndicatorKey,
@@ -167,8 +187,8 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               )
                             : const Center(
-                                  child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
-                                ),
+                                child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
+                              ),
                       ),
                     ),
                   ),
@@ -181,109 +201,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatistics(BuildContext context) {
-    return Consumer<StatusProvider>(
-      builder: (context, statusProvider, child) {
-        if (statusProvider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (statusProvider.orderCountModel != null) {
-          final totalOrders = statusProvider.orderCountModel!.allOrders.toString();
-          final completedOrders = statusProvider.orderCountModel!.completedOrders.toString();
-          final pendingOrders = statusProvider.orderCountModel!.pendingOrders.toString();
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildStatCard(
-                    title: 'Total Orders',
-                    count: totalOrders.length.toString(),
-                    color: ColorResources.COLOR_PRIMARY,
-                    width: 169,
-                    height: 160,
-                    countFontSize: 64,
-                  ),
-                  Column(
-                    children: [
-                      _buildStatCard(
-                        title: 'Completed',
-                        count: completedOrders.length.toString(),
-                        color: ColorResources.kbordergreenColor,
-                        width: 170,
-                        height: 78,
-                        countFontSize: 38,
-                      ),
-                      const SizedBox(height: 4),
-                      _buildStatCard(
-                        title: 'Pending',
-                        count: pendingOrders.length.toString(),
-                        color: ColorResources.kborderyellowColor,
-                        width: 170,
-                        height: 78,
-                        countFontSize: 38,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          );
-        } else {
-          return const Center(child: Text('No Data Available'));
-        }
-      },
-    );
-  }
-
   Widget _buildActiveOrdersTitle() {
     return const Text(
       'Active Orders',
       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String count,
-    required Color color,
-    required double width,
-    required double height,
-    required double countFontSize,
-  }) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 15, top: 7,),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-            ),
-            Text(
-              count,
-              style: TextStyle(
-                fontSize: countFontSize,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
