@@ -46,9 +46,9 @@ class MyOrderScreen extends StatelessWidget {
                       builder: (context, profileProvider, child) => profileProvider.userInfoModel != null
                           ? Container(
                               decoration: const BoxDecoration(
-                                shape: BoxShape.circle, // Ensures the image is round
+                                shape: BoxShape.circle, 
                               ),
-                              child: ClipOval( // Use ClipOval to make the image round
+                              child: ClipOval(
                                 child: FadeInImage.assetNetwork(
                                   placeholder: Images.placeholderUser,
                                   width: 70,

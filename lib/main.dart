@@ -1,12 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:resturant_delivery_boy/helper/notification_helper.dart';
 import 'package:resturant_delivery_boy/provider/chat_provider.dart';
+import 'package:resturant_delivery_boy/provider/notificatin_service.dart';
 import 'package:resturant_delivery_boy/provider/online_provider.dart';
 import 'package:resturant_delivery_boy/provider/status_provider.dart';
 import 'package:resturant_delivery_boy/utill/app_constants.dart';
@@ -28,28 +29,34 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 AndroidNotificationChannel? channel;
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
+    NotificationService firebaseApi = NotificationService();
+  await firebaseApi.initNotifications();;
+  
+  // Request notification permission
+  await Permission.notification.request();
+  
+  // Initialize dependency injection
   await di.init();
+  
+  // Initialize notification helper
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
-  if(defaultTargetPlatform == TargetPlatform.android){
+  
+  // Set up Android notification channel if on Android
+  if (defaultTargetPlatform == TargetPlatform.android) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel',
       'High Importance Notifications',
       importance: Importance.high,
     );
   }
-  await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
+  
+  // Set background message handler for Firebase Messaging
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
-
+  
+  // Run the app
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => di.sl<StatusProvider>()),
@@ -58,7 +65,6 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<OnlineProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LocalizationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<AuthProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<LocalizationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ProfileProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<OrderProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<TrackerProvider>()),
@@ -82,12 +88,12 @@ class MyApp extends StatelessWidget {
       title: AppConstants.appName,
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
-          theme: ThemeData(
+      theme: ThemeData(
         fontFamily: "Aeonik",
         appBarTheme: const AppBarTheme(
           surfaceTintColor: Colors.transparent,
         ),
-         scaffoldBackgroundColor:ColorResources.COLOR_WHITE,
+        scaffoldBackgroundColor: ColorResources.COLOR_WHITE,
       ),
       locale: Provider.of<LocalizationProvider>(context).locale,
       localizationsDelegates: const [
@@ -106,4 +112,3 @@ class Get {
   static BuildContext? get context => _navigatorKey.currentContext;
   static NavigatorState? get navigator => _navigatorKey.currentState;
 }
-

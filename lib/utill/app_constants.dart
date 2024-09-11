@@ -24,6 +24,7 @@ class AppConstants {
   static const String sendMessageUri = '/api/v1/delivery-man/message/send/deliveryman';
   static const String getOrderModel = '/api/v1/delivery-man/order-model?token=';
   static const String register = '/api/v1/auth/delivery-man/register';
+    static const String popup='https://project.artisans.qa/go-crispy/api/v1/delivery-man/check-new-orders?delivery_man_id=1';
 
 
 
