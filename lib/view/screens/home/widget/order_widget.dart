@@ -124,13 +124,8 @@ Text(
   btnTxt: getTranslated('take me there', context)!,
   textColor:ColorResources.COLOR_PRIMARY, 
   onTap: () async {
-    String url =
-        'https://www.google.com/maps/dir/?api=1&destination=${orderModel!.deliveryAddress!.latitude},${orderModel!.deliveryAddress!.longitude}&mode=d';
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url, mode: LaunchMode.externalApplication);
-    } else {
-      throw '${'could_not_launch'} $url';
-    }
+     Navigator.pop(context);
+                _openWaze(context);
   },
 ),
 
@@ -141,5 +136,14 @@ Text(
         ),
       ),
     );
+  }
+    Future<void> _openWaze(BuildContext context) async {
+    String url =
+        'https://waze.com/ul?ll=${orderModel!.deliveryAddress!.latitude},${orderModel!.deliveryAddress!.longitude}&navigate=yes';
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

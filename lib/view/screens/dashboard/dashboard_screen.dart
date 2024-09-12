@@ -54,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           type: BottomNavigationBarType.fixed,
           items: [
             _barItem(Icons.home, getTranslated('home', context), 0),
-             _barItem(Icons.shopping_bag_outlined, getTranslated('my_order', context), 1),
+             _barItem(Icons.shopping_bag_outlined, getTranslated('my order', context), 1),
             _barItem(Icons.history, getTranslated('order_history', context), 2),
             _barItem(Icons.person, getTranslated('profile', context), 3),
           ],

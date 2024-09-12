@@ -537,15 +537,27 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     width: 1170,
                     child: CustomButton(
                         btnTxt: getTranslated('direction', context),
-                        onTap: () {
-                          Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((position) {
-                            MapUtils.openMap(
-                                double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
-                                double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
-                                position.latitude ,
-                                position.longitude);
-                          });
-                        }),
+                       onTap: () async {
+  try {
+    // Request current position
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    
+    // Open map with the retrieved coordinates
+    await MapUtils.openMap(
+      double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
+      double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+      position.latitude,
+      position.longitude
+    );
+  } catch (e) {
+    // Handle any errors, such as location permissions being denied
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Unable to get current location. Please enable location services.')),
+    );
+  }
+},
+
+                        ),
                   ),
                 ),
               )
