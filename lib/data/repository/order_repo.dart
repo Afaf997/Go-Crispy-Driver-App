@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:resturant_delivery_boy/data/datasource/remote/dio/dio_client.dart';
 import 'package:resturant_delivery_boy/data/datasource/remote/exception/api_error_handler.dart';
@@ -10,10 +12,10 @@ class OrderRepo {
   final SharedPreferences? sharedPreferences;
 
   OrderRepo({required this.dioClient, required this.sharedPreferences});
-
   Future<ApiResponse> getAllOrders() async {
     try {
       final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
+      log("${sharedPreferences!.get(AppConstants.token)}");
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));

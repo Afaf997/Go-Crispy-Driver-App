@@ -25,8 +25,8 @@ Widget buildStatistics(BuildContext context) {
                     count: totalOrders.length.toString(),
                     color: ColorResources.COLOR_PRIMARY,
                     width: 169,
-                    height: 160,
-                    countFontSize: 64,
+                    height: 155,
+                    countFontSize: 60,
                   ),
                   Column(
                     children: [

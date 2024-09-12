@@ -197,9 +197,10 @@ class OrderWidget extends StatelessWidget {
   }
 }
 
+
 class MapUtils {
   MapUtils._();
-
+  
   static Future<void> openMap(double destinationLatitude, double destinationLongitude, double userLatitude, double userLongitude) async {
     String googleUrl =
         'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&mode=d';
@@ -208,7 +209,9 @@ class MapUtils {
 
     bool canLaunchGoogle = await canLaunchUrl(Uri.parse(googleUrl));
     bool canLaunchWaze = await canLaunchUrl(Uri.parse(wazeUrl));
-
-    // Add logic to handle which map to open or provide more options.
   }
 }
+
+
+
+

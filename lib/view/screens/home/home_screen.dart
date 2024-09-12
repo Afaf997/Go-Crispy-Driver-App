@@ -12,11 +12,17 @@ import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dar
 import 'package:resturant_delivery_boy/view/screens/home/widget/state_card.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/statistics.dart';
 
-class HomeScreen extends StatelessWidget {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+class HomeScreen extends StatefulWidget {
   final OrderModel? orderModel;
 
   HomeScreen({Key? key, this.orderModel}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +31,7 @@ class HomeScreen extends StatelessWidget {
     Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     Provider.of<OnlineProvider>(context, listen: false).getInitialStatus(context); 
      Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context);// Initialize status
+     Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
 
     return Scaffold(
       backgroundColor: ColorResources.kbackgroundColor,
@@ -57,31 +64,31 @@ class HomeScreen extends StatelessWidget {
                               bool isOnline = onlineProvider.onlineModel?.status == 'online';
                               return Row(
                                 children: [
-                                  Icon(
-                                    isOnline ? Icons.circle : Icons.circle,
-                                    color: isOnline ? Colors.green : Colors.red,
-                                    size: 12,
-                                  ),
+                                  // Icon(
+                                  //   isOnline ? Icons.circle : Icons.circle,
+                                  //   color: isOnline ? Colors.green : Colors.red,
+                                  //   size: 12,
+                                  // ),
                                   const SizedBox(width: 5),
-                                  Text(
-                                    isOnline ? 'Online' : 'Offline',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Transform.scale(
-                                    scale: 0.7,
-                                    child: Switch(
-                                      value: isOnline,
-                                      onChanged: (bool newValue) {
-                                        onlineProvider.toggleOnlineStatus(context);
-                                      },
-                                      activeColor: ColorResources.COLOR_WHITE,
-                                      activeTrackColor: ColorResources.COLOR_PRIMARY,
-                                    ),
-                                  ),
+                                  // Text(
+                                  //   isOnline ? 'Online' : 'Offline',
+                                  //   style: const TextStyle(
+                                  //     fontSize: 16,
+                                  //     fontWeight: FontWeight.w500,
+                                  //     color: Colors.white,
+                                  //   ),
+                                  // ),
+                                  // Transform.scale(
+                                  //   scale: 0.7,
+                                  //   child: Switch(
+                                  //     value: isOnline,
+                                  //     onChanged: (bool newValue) {
+                                  //       onlineProvider.toggleOnlineStatus(context);
+                                  //     },
+                                  //     activeColor: ColorResources.COLOR_WHITE,
+                                  //     activeTrackColor: ColorResources.COLOR_PRIMARY,
+                                  //   ),
+                                  // ),
                                 ],
                               );
                             },

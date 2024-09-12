@@ -13,7 +13,6 @@ class OnlineRepo {
   OnlineRepo({required this.dioClient, required this.sharedPreferences});
 
   Future<ApiResponse> getOnlineStatus() async {
-      log(sharedPreferences.getString(AppConstants.token).toString());
     try {
       final response = await dioClient.get(
         AppConstants.deliverymanOnlineUri,

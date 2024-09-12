@@ -4,11 +4,11 @@ import 'package:resturant_delivery_boy/data/model/response/base/api_response.dar
 import 'package:resturant_delivery_boy/utill/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PopupRepo {
+class NotificationRepo {
   final DioClient? dioClient;
   final SharedPreferences? sharedPreferences;
 
-  PopupRepo({required this.dioClient, required this.sharedPreferences});
+  NotificationRepo({required this.dioClient, required this.sharedPreferences});
 
   Future<ApiResponse> getpopup() async {
     try {
@@ -19,4 +19,3 @@ class PopupRepo {
     }
   }
 }
-

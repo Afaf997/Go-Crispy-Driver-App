@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:resturant_delivery_boy/data/model/response/base/api_response.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_details_model.dart';
@@ -21,20 +22,28 @@ class OrderProvider with ChangeNotifier {
 
   List<OrderModel> get currentOrders => _currentOrders;
 
-  Future getAllOrders(BuildContext context) async {
-    ApiResponse apiResponse = await orderRepo!.getAllOrders();
-    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      _currentOrders = [];
-      _currentOrdersReverse = [];
-      apiResponse.response!.data.forEach((order) {
-        _currentOrdersReverse.add(OrderModel.fromJson(order));
-      });
-      _currentOrders = List.from(_currentOrdersReverse.reversed);
-    } else {
-      ApiChecker.checkApi(apiResponse);
-    }
-    notifyListeners();
+ Future getAllOrders(BuildContext context) async {
+  ApiResponse apiResponse = await orderRepo!.getAllOrders();
+  log('API Response Data: ${apiResponse.response?.data}');
+
+  if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+    _currentOrders = [];
+    _currentOrdersReverse = [];
+    
+    apiResponse.response!.data.forEach((order) {
+      _currentOrdersReverse.add(OrderModel.fromJson(order));
+    });
+    
+    _currentOrders = List.from(_currentOrdersReverse.reversed);
+  
+    // log('Processed Orders: $_currentOrders');
+  } else {
+    ApiChecker.checkApi(apiResponse);
+    print('API Error: ${apiResponse.error}');
   }
+  
+  notifyListeners();
+}
 
   // get order details
   final OrderDetailsModel _orderDetailsModel = OrderDetailsModel();
@@ -94,7 +103,7 @@ class OrderProvider with ChangeNotifier {
 
     ResponseModel responseModel;
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-     // _currentOrdersReverse[index].orderStatus = status;
+    //  _currentOrdersReverse[index].orderStatus = status;
       _feedbackMessage = apiResponse.response!.data['message'];
       responseModel = ResponseModel(apiResponse.response!.data['message'], true);
     } else {
@@ -128,4 +137,6 @@ class OrderProvider with ChangeNotifier {
     notifyListeners();
     return _currentOrderModel;
   }
+
+  
 }
