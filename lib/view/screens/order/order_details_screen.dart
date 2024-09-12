@@ -29,6 +29,7 @@ import 'package:resturant_delivery_boy/view/screens/order/widget/delivery_dialog
 import 'package:resturant_delivery_boy/view/screens/order/widget/slider_button.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/timer_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final OrderModel? orderModelItem;
@@ -41,6 +42,7 @@ class OrderDetailsScreen extends StatefulWidget {
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   OrderModel? orderModel;
   double? deliveryCharge = 0;
+  
 
 
 
@@ -530,37 +532,32 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
               ),
               orderModel!.orderStatus == 'processing' || orderModel!.orderStatus == 'out_for_delivery'
-                  ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                  child: SizedBox(
-                    width: 1170,
-                    child: CustomButton(
-                        btnTxt: getTranslated('direction', context),
-                       onTap: () async {
-  try {
-    // Request current position
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    
-    // Open map with the retrieved coordinates
-    await MapUtils.openMap(
-      double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
-      double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
-      position.latitude,
-      position.longitude
-    );
-  } catch (e) {
-    // Handle any errors, such as location permissions being denied
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Unable to get current location. Please enable location services.')),
-    );
-  }
-},
+                  ?Center(
+  child: Padding(
+    padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+    child: SizedBox(
+      width: 1170,
+      child: CustomButton(
+        btnTxt: getTranslated('direction', context),
+        onTap: () async {
+          try {
+            // Request the current position
+            Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+            
+            // Show options to choose between Google Maps and Waze
+            _showDirectionOptions(context, position);
+          } catch (e) {
+            // Handle any errors, such as location permissions being denied
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Unable to get current location. Please enable location services.')),
+            );
+          }
+        },
+      ),
+    ),
+  ),
+)
 
-                        ),
-                  ),
-                ),
-              )
                   : const SizedBox.shrink(),
 
               orderModel!.orderStatus != 'delivered' && !orderModel!.isGuest! ? SafeArea(child: Center(
@@ -701,6 +698,45 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       ),
     );
   }
+    void _showDirectionOptions(BuildContext context, Position position) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Wrap(
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.map),
+            title: Text('Google Maps'),
+            onTap: () async {
+              Navigator.pop(context);
+              await MapUtils.openMap(
+                double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
+                double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+                position.latitude,
+                position.longitude,
+                true // Pass true to indicate Google Maps
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.directions_car),
+            title: Text('Waze'),
+            onTap: () async {
+              Navigator.pop(context);
+              await MapUtils.openMap(
+                double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
+                double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+                position.latitude,
+                position.longitude,
+                false // Pass false to indicate Waze
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
 }
 
@@ -725,4 +761,24 @@ class ProductTypeView extends StatelessWidget {
       ),
     );
   }
+
+
 }
+class MapUtils {
+  MapUtils._();
+
+  static Future<void> openMap(double destinationLatitude, double destinationLongitude, double userLatitude, double userLongitude, bool isGoogleMap) async {
+    String googleUrl = 'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&mode=d';
+    String wazeUrl = 'https://waze.com/ul?ll=$destinationLatitude,$destinationLongitude&navigate=yes';
+
+    String url = isGoogleMap ? googleUrl : wazeUrl;
+
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+}
+
+

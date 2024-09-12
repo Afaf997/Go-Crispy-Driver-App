@@ -198,38 +198,17 @@ class OrderWidget extends StatelessWidget {
 }
 
 
-// class MapUtils {
-//   MapUtils._();
-  
-//   static Future<void> openMap(double destinationLatitude, double destinationLongitude, double userLatitude, double userLongitude) async {
-//     String googleUrl =
-//         'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&mode=d';
-//     String wazeUrl =
-//         'https://www.waze.com/live-map/$destinationLatitude,$destinationLongitude&navigate=yes';
-
-//     bool canLaunchGoogle = await canLaunchUrl(Uri.parse(googleUrl));
-//     bool canLaunchWaze = await canLaunchUrl(Uri.parse(wazeUrl));
-//   }
-// }
-
-
-
 class MapUtils {
   MapUtils._();
-
+  
   static Future<void> openMap(double destinationLatitude, double destinationLongitude, double userLatitude, double userLongitude) async {
     String googleUrl =
         'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&mode=d';
     String wazeUrl =
-        'https://www.waze.com/live-map/?ll=$destinationLatitude,$destinationLongitude&navigate=yes';
+        'https://www.waze.com/live-map/$destinationLatitude,$destinationLongitude&navigate=yes';
 
-    if (await canLaunchUrl(Uri.parse(googleUrl))) {
-      await launchUrl(Uri.parse(googleUrl), mode: LaunchMode.externalApplication);
-    } else if (await canLaunchUrl(Uri.parse(wazeUrl))) {
-      await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
-    } else {
-      throw 'Could not launch any map application';
-    }
+    bool canLaunchGoogle = await canLaunchUrl(Uri.parse(googleUrl));
+    bool canLaunchWaze = await canLaunchUrl(Uri.parse(wazeUrl));
   }
 }
 

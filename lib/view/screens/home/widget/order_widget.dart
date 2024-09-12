@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/localization/language_constrants.dart';
@@ -9,6 +10,7 @@ import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
 import 'package:resturant_delivery_boy/view/base/custom_button.dart';
 import 'package:resturant_delivery_boy/view/screens/order/order_details_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeOrderWidget extends StatelessWidget {
@@ -33,21 +35,20 @@ class HomeOrderWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                 Text(
-  getTranslated('order_id', context)!,
-  style:const TextStyle(
-    fontSize: 14, 
-    fontWeight: FontWeight.w500, 
-  ),
-),
-Text(
-  ' # ${orderModel!.id.toString()}',
-  style:const TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500, 
-  ),
-),
-
+                    Text(
+                      getTranslated('order_id', context)!,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' # ${orderModel!.id.toString()}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
                 Stack(
@@ -57,12 +58,9 @@ Text(
                     Positioned(
                       right: Provider.of<LocalizationProvider>(context).isLtr ? 0 : null,
                       left: Provider.of<LocalizationProvider>(context).isLtr ? null : 0,
-                      top: -10, 
+                      top: -10,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 2, 
-                          horizontal: 10,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
                         decoration: BoxDecoration(
                           color: ColorResources.kbordergreenColor,
                           borderRadius: BorderRadius.circular(10),
@@ -100,50 +98,108 @@ Text(
               ],
             ),
             const SizedBox(height: 15),
-       Row(
-  children: [
-    GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => OrderDetailsScreen(orderModelItem: orderModel)));
-      },
-      child: Text(
-        getTranslated('view_details', context)!,
-        style:const TextStyle(
-          color:ColorResources.kborderyellowColor , 
-          fontWeight: FontWeight.w400,
-          fontSize: 12,
-        ),
-      ),
-    ),
-    const SizedBox(width: 20),
-   CustomButton(
-  isShowBorder: true,
-  borderColor: ColorResources.Boarder_COLOR,
-  buttonColor: ColorResources.COLOR_WHITE,
-  btnTxt: getTranslated('take me there', context)!,
-  textColor:ColorResources.COLOR_PRIMARY, 
-  onTap: () async {
-     Navigator.pop(context);
-                _openWaze(context);
-  },
-),
-
-  ],
-),
-
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => OrderDetailsScreen(orderModelItem: orderModel)));
+                  },
+                  child: Text(
+                    getTranslated('view_details', context)!,
+                    style: const TextStyle(
+                      color: ColorResources.kborderyellowColor,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                CustomButton(
+                  isShowBorder: true,
+                  borderColor: ColorResources.Boarder_COLOR,
+                  buttonColor: ColorResources.COLOR_WHITE,
+                  btnTxt: getTranslated('take_me_there', context)!,
+                  textColor: ColorResources.COLOR_PRIMARY,
+                  onTap: () async {
+                    try {
+                      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+                      _showDirectionOptions(context, position);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Unable to get current location. Please enable location services.')),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
-    Future<void> _openWaze(BuildContext context) async {
-    String url =
-        'https://waze.com/ul?ll=${orderModel!.deliveryAddress!.latitude},${orderModel!.deliveryAddress!.longitude}&navigate=yes';
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url, mode: LaunchMode.externalApplication);
+
+  void _showDirectionOptions(BuildContext context, Position position) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.map),
+              title: Text('Google Maps'),
+              onTap: () async {
+                Navigator.pop(context);
+                await MapUtils.openMap(
+                  double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
+                  double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+                  position.latitude,
+                  position.longitude,
+                  true // Pass true to indicate Google Maps
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.directions_car),
+              title: Text('Waze'),
+              onTap: () async {
+                Navigator.pop(context);
+                await MapUtils.openMap(
+                  double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
+                  double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+                  position.latitude,
+                  position.longitude,
+                  false // Pass false to indicate Waze
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class MapUtils {
+  MapUtils._();
+  
+  static Future<void> openMap(double destinationLatitude, double destinationLongitude, double userLatitude, double userLongitude, bool isGoogleMap) async {
+    String googleUrl = 'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&travelmode=driving';
+    String wazeUrl = 'https://waze.com/ul?ll=$destinationLatitude,$destinationLongitude&navigate=yes';
+    
+    if (isGoogleMap) {
+      if (await canLaunchUrl(Uri.parse(googleUrl))) {
+        await launchUrlString(googleUrl);
+      } else {
+        throw 'Could not launch Google Maps';
+      }
     } else {
-      throw 'Could not launch $url';
+      if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+        await launchUrlString(wazeUrl);
+      } else {
+        throw 'Could not launch Waze';
+      }
     }
   }
 }
