@@ -127,7 +127,7 @@ class HomeOrderWidget extends StatelessWidget {
                       _showDirectionOptions(context, position);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Unable to get current location. Please enable location services.')),
+                       const SnackBar(content: Text('Unable to get current location. Please enable location services.')),
                       );
                     }
                   },

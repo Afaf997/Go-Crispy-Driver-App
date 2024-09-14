@@ -584,17 +584,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   child: Directionality(
                     textDirection: TextDirection.ltr,
                     child: SliderButton(
-                      action: () {
-                        MyOrderScreen.checkPermission(context,callBack: () {
-                          Provider.of<TrackerProvider>(context, listen: false).setOrderID(orderModel!.id!);
-                          Provider.of<TrackerProvider>(context, listen: false).startLocationService();
-                          String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-                          Provider.of<OrderProvider>(context, listen: false)
-                              .updateOrderStatus(token: token, orderId: orderModel!.id, status: 'out_for_delivery');
-                          Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
-                          Navigator.pop(context);
-                        });
-                      },
+                    action: () {
+  MyOrderScreen.checkPermission(context, callBack: () {
+    Provider.of<TrackerProvider>(context, listen: false).setOrderID(orderModel!.id!);
+    Provider.of<TrackerProvider>(context, listen: false).startLocationService();
+    String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
+    Provider.of<OrderProvider>(context, listen: false)
+        .updateOrderStatus(token: token, orderId: orderModel!.id, status: 'out_for_delivery');
+    Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
+    Navigator.pop(context);
+  });
+},
+
 
                       ///Put label over here
                       label: Text(

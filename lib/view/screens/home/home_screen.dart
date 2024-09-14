@@ -64,31 +64,31 @@ class _HomeScreenState extends State<HomeScreen> {
                               bool isOnline = onlineProvider.onlineModel?.status == 'online';
                               return Row(
                                 children: [
-                                  // Icon(
-                                  //   isOnline ? Icons.circle : Icons.circle,
-                                  //   color: isOnline ? Colors.green : Colors.red,
-                                  //   size: 12,
-                                  // ),
+                                  Icon(
+                                    isOnline ? Icons.circle : Icons.circle,
+                                    color: isOnline ? Colors.green : Colors.red,
+                                    size: 12,
+                                  ),
                                   const SizedBox(width: 5),
-                                  // Text(
-                                  //   isOnline ? 'Online' : 'Offline',
-                                  //   style: const TextStyle(
-                                  //     fontSize: 16,
-                                  //     fontWeight: FontWeight.w500,
-                                  //     color: Colors.white,
-                                  //   ),
-                                  // ),
-                                  // Transform.scale(
-                                  //   scale: 0.7,
-                                  //   child: Switch(
-                                  //     value: isOnline,
-                                  //     onChanged: (bool newValue) {
-                                  //       onlineProvider.toggleOnlineStatus(context);
-                                  //     },
-                                  //     activeColor: ColorResources.COLOR_WHITE,
-                                  //     activeTrackColor: ColorResources.COLOR_PRIMARY,
-                                  //   ),
-                                  // ),
+                                  Text(
+                                    isOnline ? 'Online' : 'Offline',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.7,
+                                    child: Switch(
+                                      value: isOnline,
+                                      onChanged: (bool newValue) {
+                                        onlineProvider.toggleOnlineStatus(context);
+                                      },
+                                      activeColor: ColorResources.COLOR_WHITE,
+                                      activeTrackColor: ColorResources.COLOR_PRIMARY,
+                                    ),
+                                  ),
                                 ],
                               );
                             },

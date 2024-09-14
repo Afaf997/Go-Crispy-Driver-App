@@ -15,7 +15,7 @@ class OrderRepo {
   Future<ApiResponse> getAllOrders() async {
     try {
       final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
-      log("${sharedPreferences!.get(AppConstants.token)}");
+      // log("${sharedPreferences!.get(AppConstants.token)}");
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));

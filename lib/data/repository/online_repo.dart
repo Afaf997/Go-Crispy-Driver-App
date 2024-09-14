@@ -29,7 +29,7 @@ class OnlineRepo {
   }
 
   Future<ApiResponse> getOfflineStatus() async {
-     log(sharedPreferences.getString(AppConstants.token).toString());            
+    //  log(sharedPreferences.getString(AppConstants.token).toString());            
     try {
       final response = await dioClient.get(
         AppConstants.deliveryOfflineUri,

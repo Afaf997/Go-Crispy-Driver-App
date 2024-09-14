@@ -12,6 +12,6 @@ class NotificationService {
     
     // Retrieve the FCM token
     final fCMToken = await firebaseMessaging.getToken();
-    log('FCM Token: $fCMToken');
+    // log('FCM Token: $fCMToken');
   }
 }
