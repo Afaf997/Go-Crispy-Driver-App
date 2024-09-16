@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -15,7 +15,8 @@ import 'package:resturant_delivery_boy/view/screens/order/widget/permission_dial
 import '../../../data/model/response/order_model.dart';
 
 class MyOrderScreen extends StatefulWidget {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   MyOrderScreen({Key? key}) : super(key: key);
 
@@ -26,7 +27,6 @@ class MyOrderScreen extends StatefulWidget {
     }
     if (permission == LocationPermission.denied) {
       showDialog(
-        // ignore: use_build_context_synchronously
         context: context,
         barrierDismissible: false,
         builder: (ctx) => PermissionDialog(
@@ -65,16 +65,42 @@ class MyOrderScreen extends StatefulWidget {
 }
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
-  AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   List<OrderModel> _previousOrders = [];
+  bool _isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
+    Provider.of<OrderProvider>(context, listen: false)
+        .addListener(_checkNewOrder);
   }
 
+  @override
+  void dispose() {
+    Provider.of<OrderProvider>(context, listen: false)
+        .removeListener(_checkNewOrder);
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  // Method to check for new orders and play notification sound
+  void _checkNewOrder() {
+    final currentOrders =
+        Provider.of<OrderProvider>(context, listen: false).currentOrders;
+    if (!_isFirstLoad && _previousOrders.length < currentOrders.length) {
+      _playNotificationSound();
+    }
+    _isFirstLoad = false;
+    _previousOrders = List.from(currentOrders);
+  }
+
+
+  Future<void> _playNotificationSound() async {
+    await _audioPlayer.play(AssetSource('assets/audio/audio.wav'));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +108,10 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
       backgroundColor: ColorResources.kbackgroundColor,
       body: Consumer<OrderProvider>(
         builder: (context, orderProvider, child) {
-          _previousOrders = orderProvider.currentOrders;
-
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header Section with Profile Info
               Container(
                 width: double.infinity,
                 height: 190,
@@ -147,17 +172,19 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                 ),
               ),
               const SizedBox(height: 15),
+              // Active Orders Title
               Padding(
                 padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                 child: Text(
                   getTranslated('active_order', context)!,
                   style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                    fontSize: Dimensions.fontSizeLarge,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  ),
+                        fontSize: Dimensions.fontSizeLarge,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
                 ),
               ),
+              // List of Active Orders
               Expanded(
                 child: RefreshIndicator(
                   key: widget._refreshIndicatorKey,
@@ -172,7 +199,8 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                         )
                       : const Center(
                           child: CircularProgressIndicator(
-                              color: ColorResources.COLOR_PRIMARY),
+                            color: ColorResources.COLOR_PRIMARY,
+                          ),
                         ),
                 ),
               ),
