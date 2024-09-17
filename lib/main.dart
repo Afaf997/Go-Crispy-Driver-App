@@ -51,22 +51,20 @@ void callbackDispatcher() {
 Future<void> checkOrdersAndPlayAudio() async {
   try {
     final response = await dioClient?.get('${AppConstants.currentOrdersUri}${sharedPreferences?.getString(AppConstants.token)}');
+     if (response?.statusCode == 200) {
+         AudioPlayer audioPlayer = AudioPlayer();
+           await audioPlayer.play(AssetSource('assets/audio/audio.wav')); 
+         await audioPlayer.dispose(); 
+     }
 
-    if (response?.statusCode == 200) {
-     int currentOrderLength = response?.data.length ?? 0;
+    // if (response?.statusCode == 200) {
+    //  int currentOrderLength = response?.data.length ?? 0;
+    //   int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
 
-      // Retrieve stored order length from SharedPreferences
-      int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
-
-      // Check if the current length is greater than the stored length
-      if (currentOrderLength > storedOrderLength) {
-        // Play audio if the current length is greater
-        await _playAudio();
-
-        // Update stored order length with the new value
-        await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
-      }
-    }
+    //   if (currentOrderLength > storedOrderLength) {
+    //     await _playAudio();
+    //     await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
+    //   }}
   } catch (e) {
     log('Error in checkOrdersAndPlayAudio: ${ApiErrorHandler.getMessage(e)}');
   }

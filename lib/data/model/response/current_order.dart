@@ -1,38 +1,38 @@
 class CurrentOrder {
-  int id;
-  int userId;
-  int isGuest;
-  double orderAmount;
-  double couponDiscountAmount;
-  String? couponDiscountTitle;
-  String paymentStatus;
-  String orderStatus;
-  double totalTaxAmount;
-  String paymentMethod;
-  String? transactionReference;
-  int deliveryAddressId;
-  DateTime createdAt;
-  DateTime updatedAt;
-  int checked;
-  int deliveryManId;
-  double deliveryCharge;
-  String? orderNote;
-  String? couponCode;
-  String orderType;
-  String? carPlateNo;
-  int branchId;
-  String? callback;
-  DateTime deliveryDate;
-  String deliveryTime;
-  double extraDiscount;
-  DeliveryAddress deliveryAddress;
-  int preparationTime;
-  int? tableId;
-  int? numberOfPeople;
-  int? tableOrderId;
-  String orderFrom;
-  Customer customer;
-  List<dynamic> orderPartialPayments;
+  final int id;
+  final int userId;
+  final bool isGuest;
+  final double orderAmount;
+  final double couponDiscountAmount;
+  final String? couponDiscountTitle;
+  final String paymentStatus;
+  final String orderStatus;
+  final double totalTaxAmount;
+  final String paymentMethod;
+  final String? transactionReference;
+  final int deliveryAddressId;
+  final String createdAt;
+  final String updatedAt;
+  final bool checked;
+  final int deliveryManId;
+  final double deliveryCharge;
+  final String? orderNote;
+  final String? couponCode;
+  final String orderType;
+  final String? carPlateno;
+  final int branchId;
+  final String? callback;
+  final String deliveryDate;
+  final String deliveryTime;
+  final String extraDiscount;
+  final String? deliveryAddress;
+  final int preparationTime;
+  final int? tableId;
+  final int? numberOfPeople;
+  final int? tableOrderId;
+  final String orderFrom;
+  final dynamic customer; // You can create a separate model if needed
+  final List<dynamic> orderPartialPayments; // You can create a model for partial payments
 
   CurrentOrder({
     required this.id,
@@ -55,19 +55,19 @@ class CurrentOrder {
     this.orderNote,
     this.couponCode,
     required this.orderType,
-    this.carPlateNo,
+    this.carPlateno,
     required this.branchId,
     this.callback,
     required this.deliveryDate,
     required this.deliveryTime,
     required this.extraDiscount,
-    required this.deliveryAddress,
+    this.deliveryAddress,
     required this.preparationTime,
     this.tableId,
     this.numberOfPeople,
     this.tableOrderId,
     required this.orderFrom,
-    required this.customer,
+    this.customer,
     required this.orderPartialPayments,
   });
 
@@ -75,38 +75,38 @@ class CurrentOrder {
     return CurrentOrder(
       id: json['id'],
       userId: json['user_id'],
-      isGuest: json['is_guest'],
-      orderAmount: json['order_amount'].toDouble(),
-      couponDiscountAmount: json['coupon_discount_amount'].toDouble(),
+      isGuest: json['is_guest'] == 1,
+      orderAmount: (json['order_amount'] as num).toDouble(),
+      couponDiscountAmount: (json['coupon_discount_amount'] as num).toDouble(),
       couponDiscountTitle: json['coupon_discount_title'],
       paymentStatus: json['payment_status'],
       orderStatus: json['order_status'],
-      totalTaxAmount: json['total_tax_amount'].toDouble(),
+      totalTaxAmount: (json['total_tax_amount'] as num).toDouble(),
       paymentMethod: json['payment_method'],
       transactionReference: json['transaction_reference'],
       deliveryAddressId: json['delivery_address_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      checked: json['checked'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
+      checked: json['checked'] == 1,
       deliveryManId: json['delivery_man_id'],
-      deliveryCharge: json['delivery_charge'].toDouble(),
+      deliveryCharge: (json['delivery_charge'] as num).toDouble(),
       orderNote: json['order_note'],
       couponCode: json['coupon_code'],
       orderType: json['order_type'],
-      carPlateNo: json['car_plateno'],
+      carPlateno: json['car_plateno'],
       branchId: json['branch_id'],
       callback: json['callback'],
-      deliveryDate: DateTime.parse(json['delivery_date']),
+      deliveryDate: json['delivery_date'],
       deliveryTime: json['delivery_time'],
-      extraDiscount: json['extra_discount'].toDouble(),
-      deliveryAddress: DeliveryAddress.fromJson(json['delivery_address']),
+      extraDiscount: json['extra_discount'],
+      deliveryAddress: json['delivery_address'],
       preparationTime: json['preparation_time'],
       tableId: json['table_id'],
       numberOfPeople: json['number_of_people'],
       tableOrderId: json['table_order_id'],
       orderFrom: json['order_from'],
-      customer: Customer.fromJson(json['customer']),
-      orderPartialPayments: List<dynamic>.from(json['order_partial_payments']),
+      customer: json['customer'],
+      orderPartialPayments: json['order_partial_payments'] ?? [],
     );
   }
 
@@ -114,7 +114,7 @@ class CurrentOrder {
     return {
       'id': id,
       'user_id': userId,
-      'is_guest': isGuest,
+      'is_guest': isGuest ? 1 : 0,
       'order_amount': orderAmount,
       'coupon_discount_amount': couponDiscountAmount,
       'coupon_discount_title': couponDiscountTitle,
@@ -124,228 +124,28 @@ class CurrentOrder {
       'payment_method': paymentMethod,
       'transaction_reference': transactionReference,
       'delivery_address_id': deliveryAddressId,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-      'checked': checked,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'checked': checked ? 1 : 0,
       'delivery_man_id': deliveryManId,
       'delivery_charge': deliveryCharge,
       'order_note': orderNote,
       'coupon_code': couponCode,
       'order_type': orderType,
-      'car_plateno': carPlateNo,
+      'car_plateno': carPlateno,
       'branch_id': branchId,
       'callback': callback,
-      'delivery_date': deliveryDate.toIso8601String(),
+      'delivery_date': deliveryDate,
       'delivery_time': deliveryTime,
       'extra_discount': extraDiscount,
-      'delivery_address': deliveryAddress.toJson(),
+      'delivery_address': deliveryAddress,
       'preparation_time': preparationTime,
       'table_id': tableId,
       'number_of_people': numberOfPeople,
       'table_order_id': tableOrderId,
       'order_from': orderFrom,
-      'customer': customer.toJson(),
+      'customer': customer,
       'order_partial_payments': orderPartialPayments,
-    };
-  }
-}
-
-class DeliveryAddress {
-  int id;
-  String addressType;
-  String contactPersonNumber;
-  String? floor;
-  String? house;
-  String? road;
-  String address;
-  String latitude;
-  String longitude;
-  DateTime createdAt;
-  DateTime updatedAt;
-  int userId;
-  int isGuest;
-  String contactPersonName;
-
-  DeliveryAddress({
-    required this.id,
-    required this.addressType,
-    required this.contactPersonNumber,
-    this.floor,
-    this.house,
-    this.road,
-    required this.address,
-    required this.latitude,
-    required this.longitude,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.userId,
-    required this.isGuest,
-    required this.contactPersonName,
-  });
-
-  factory DeliveryAddress.fromJson(Map<String, dynamic> json) {
-    return DeliveryAddress(
-      id: json['id'],
-      addressType: json['address_type'],
-      contactPersonNumber: json['contact_person_number'],
-      floor: json['floor'],
-      house: json['house'],
-      road: json['road'],
-      address: json['address'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      userId: json['user_id'],
-      isGuest: json['is_guest'],
-      contactPersonName: json['contact_person_name'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'address_type': addressType,
-      'contact_person_number': contactPersonNumber,
-      'floor': floor,
-      'house': house,
-      'road': road,
-      'address': address,
-      'latitude': latitude,
-      'longitude': longitude,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-      'user_id': userId,
-      'is_guest': isGuest,
-      'contact_person_name': contactPersonName,
-    };
-  }
-}
-
-class Customer {
-  int id;
-  String firstName;
-  String lastName;
-  String email;
-  String? userType;
-  String userFrom;
-  int isActive;
-  String? image;
-  int isPhoneVerified;
-  String? emailVerifiedAt;
-  DateTime createdAt;
-  DateTime updatedAt;
-  String? emailVerificationToken;
-  String? countryCode;
-  String phone;
-  String cmFirebaseToken;
-  int point;
-  String? temporaryToken;
-  String? loginMedium;
-  String walletBalance;
-  String? referCode;
-  String? referBy;
-  int loginHitCount;
-  int isTempBlocked;
-  String? tempBlockTime;
-  String languageCode;
-  int status;
-  int ordersCount;
-
-  Customer({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    this.userType,
-    required this.userFrom,
-    required this.isActive,
-    this.image,
-    required this.isPhoneVerified,
-    this.emailVerifiedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    this.emailVerificationToken,
-    this.countryCode,
-    required this.phone,
-    required this.cmFirebaseToken,
-    required this.point,
-    this.temporaryToken,
-    this.loginMedium,
-    required this.walletBalance,
-    this.referCode,
-    this.referBy,
-    required this.loginHitCount,
-    required this.isTempBlocked,
-    this.tempBlockTime,
-    required this.languageCode,
-    required this.status,
-    required this.ordersCount,
-  });
-
-  factory Customer.fromJson(Map<String, dynamic> json) {
-    return Customer(
-      id: json['id'],
-      firstName: json['f_name'],
-      lastName: json['l_name'],
-      email: json['email'],
-      userType: json['user_type'],
-      userFrom: json['user_from'],
-      isActive: json['is_active'],
-      image: json['image'],
-      isPhoneVerified: json['is_phone_verified'],
-      emailVerifiedAt: json['email_verified_at'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      emailVerificationToken: json['email_verification_token'],
-      countryCode: json['country_code'],
-      phone: json['phone'],
-      cmFirebaseToken: json['cm_firebase_token'],
-      point: json['point'],
-      temporaryToken: json['temporary_token'],
-      loginMedium: json['login_medium'],
-      walletBalance: json['wallet_balance'],
-      referCode: json['refer_code'],
-      referBy: json['refer_by'],
-      loginHitCount: json['login_hit_count'],
-      isTempBlocked: json['is_temp_blocked'],
-      tempBlockTime: json['temp_block_time'],
-      languageCode: json['language_code'],
-      status: json['status'],
-      ordersCount: json['orders_count'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'f_name': firstName,
-      'l_name': lastName,
-      'email': email,
-      'user_type': userType,
-      'user_from': userFrom,
-      'is_active': isActive,
-      'image': image,
-      'is_phone_verified': isPhoneVerified,
-      'email_verified_at': emailVerifiedAt,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-      'email_verification_token': emailVerificationToken,
-      'country_code': countryCode,
-      'phone': phone,
-      'cm_firebase_token': cmFirebaseToken,
-      'point': point,
-      'temporary_token': temporaryToken,
-      'login_medium': loginMedium,
-      'wallet_balance': walletBalance,
-      'refer_code': referCode,
-      'refer_by': referBy,
-      'login_hit_count': loginHitCount,
-      'is_temp_blocked': isTempBlocked,
-      'temp_block_time': tempBlockTime,
-      'language_code': languageCode,
-      'status': status,
-      'orders_count': ordersCount,
     };
   }
 }

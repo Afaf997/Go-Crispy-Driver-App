@@ -22,6 +22,7 @@ class OrderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      log('Current Order: ${currentOrder?.branchId}');
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Container(
@@ -116,7 +117,8 @@ class OrderWidget extends StatelessWidget {
                         : 'Address not found',
                   ),
                 ),
-                // Text(currentOrder?.branchId?.toString() ?? 'No branch ID available')
+                Text(currentOrder?.branchId?.toString() ?? 'No branch ID available')
+                
               ],
             ),
             const SizedBox(height: 25),

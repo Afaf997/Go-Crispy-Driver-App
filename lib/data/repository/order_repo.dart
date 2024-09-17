@@ -13,15 +13,23 @@ class OrderRepo {
   final SharedPreferences? sharedPreferences;
 
   OrderRepo({required this.dioClient, required this.sharedPreferences});
-  Future<ApiResponse> getAllOrders() async {
-    try {
-      final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
-      log("${sharedPreferences!.get(AppConstants.token)}");
-      return ApiResponse.withSuccess(response);
-    } catch (e) {
-      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-    }
+Future<ApiResponse> getAllOrders() async {
+  try {
+    final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
+    log("Token: ${sharedPreferences!.get(AppConstants.token)}");
+    
+    // Logging the full response data
+    log("Response Data: ${response.data[0]}");
+    
+    return ApiResponse.withSuccess(response);
+  } catch (e) {
+    // Logging the error
+    log("Error: ${ApiErrorHandler.getMessage(e)}");
+    
+    return ApiResponse.withError(ApiErrorHandler.getMessage(e));
   }
+}
+
 
 
 Future<ApiResponse> performPostRequest() async {

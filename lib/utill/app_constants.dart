@@ -4,7 +4,7 @@ import 'package:resturant_delivery_boy/utill/images.dart';
 class AppConstants {
   static const String appName = 'Restaurant Delivery Man';
   static const double appVersion = 10.2;
-  static const String baseUrl = 'https://project.artisans.qa/go-crispy';
+  static const String baseUrl = 'https://project.artisans.qa/go-crispy-new/';
   static const String profileUri = '/api/v1/delivery-man/profile?token=';
   static const String configUri = '/api/v1/config';
   static const String loginUri = '/api/v1/auth/delivery-man/login';
