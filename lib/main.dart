@@ -33,6 +33,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
+import 'dart:developer';
+
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 AndroidNotificationChannel? channel;
@@ -41,6 +43,9 @@ final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 DioClient? dioClient;
 SharedPreferences? sharedPreferences;
 
+const fetchOrdersTask = "fetchOrdersTask";
+
+// Background callback for WorkManager
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     await checkOrdersAndPlayAudio();
@@ -51,20 +56,16 @@ void callbackDispatcher() {
 Future<void> checkOrdersAndPlayAudio() async {
   try {
     final response = await dioClient?.get('${AppConstants.currentOrdersUri}${sharedPreferences?.getString(AppConstants.token)}');
-     if (response?.statusCode == 200) {
-         AudioPlayer audioPlayer = AudioPlayer();
-           await audioPlayer.play(AssetSource('assets/audio/audio.wav')); 
-         await audioPlayer.dispose(); 
-     }
 
-    // if (response?.statusCode == 200) {
-    //  int currentOrderLength = response?.data.length ?? 0;
-    //   int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
+    if (response?.statusCode == 200) {
+      int currentOrderLength = response?.data.length ?? 0;
+      int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
 
-    //   if (currentOrderLength > storedOrderLength) {
-    //     await _playAudio();
-    //     await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
-    //   }}
+      if (currentOrderLength > storedOrderLength) {
+        await _playAudio();
+        await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
+      }
+    }
   } catch (e) {
     log('Error in checkOrdersAndPlayAudio: ${ApiErrorHandler.getMessage(e)}');
   }
@@ -73,8 +74,8 @@ Future<void> checkOrdersAndPlayAudio() async {
 Future<void> _playAudio() async {
   try {
     AudioPlayer audioPlayer = AudioPlayer();
-    await audioPlayer.play(AssetSource('assets/audio/audio.wav')); 
-    await audioPlayer.dispose(); 
+    await audioPlayer.play(AssetSource('assets/image/audio.wav'));
+    await audioPlayer.dispose();
   } catch (e) {
     log('Error playing audio: $e');
   }
@@ -82,14 +83,26 @@ Future<void> _playAudio() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp();
   
   NotificationService firebaseApi = NotificationService();
   await firebaseApi.initNotifications();
   
   await Permission.notification.request();
+  
   await di.init();
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
+  
+  // Initialize Workmanager
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  
+  // Scheduling one-time task with 10-second delay (for testing)
+  Workmanager().registerOneOffTask(
+    fetchOrdersTask,
+    fetchOrdersTask,
+    initialDelay: const Duration(seconds: 10),
+  );
   
   if (defaultTargetPlatform == TargetPlatform.android) {
     channel = const AndroidNotificationChannel(
@@ -139,7 +152,6 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: ColorResources.COLOR_WHITE,
       ),
-      
       locale: Provider.of<LocalizationProvider>(context).locale,
       localizationsDelegates: const [
         AppLocalization.delegate,

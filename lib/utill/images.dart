@@ -21,6 +21,7 @@ class Images {
   static const String email = 'assets/image/email.png';
   static const String send = 'assets/image/send.png';
   static const String image = 'assets/image/image.png';
+  static const String audios = 'assets/image/audio.wav';
 
 
    static const String audio = 'assets/audio/audio.wav';
