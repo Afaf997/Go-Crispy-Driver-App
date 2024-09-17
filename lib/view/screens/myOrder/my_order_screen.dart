@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -11,7 +11,6 @@ import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/myOrder/widget/orders_widget.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/permission_dialog.dart';
-
 import '../../../data/model/response/order_model.dart';
 
 class MyOrderScreen extends StatefulWidget {
@@ -65,42 +64,14 @@ class MyOrderScreen extends StatefulWidget {
 }
 
 class _MyOrderScreenState extends State<MyOrderScreen> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  List<OrderModel> _previousOrders = [];
-  bool _isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
     Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
-    Provider.of<OrderProvider>(context, listen: false)
-        .addListener(_checkNewOrder);
   }
 
-  @override
-  void dispose() {
-    Provider.of<OrderProvider>(context, listen: false)
-        .removeListener(_checkNewOrder);
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
-  // Method to check for new orders and play notification sound
-  void _checkNewOrder() {
-    final currentOrders =
-        Provider.of<OrderProvider>(context, listen: false).currentOrders;
-    if (!_isFirstLoad && _previousOrders.length < currentOrders.length) {
-      _playNotificationSound();
-    }
-    _isFirstLoad = false;
-    _previousOrders = List.from(currentOrders);
-  }
-
-
-  Future<void> _playNotificationSound() async {
-    await _audioPlayer.play(AssetSource('assets/audio/audio.wav'));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +82,6 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Section with Profile Info
               Container(
                 width: double.infinity,
                 height: 190,
@@ -172,7 +142,6 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              // Active Orders Title
               Padding(
                 padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                 child: Text(
@@ -184,7 +153,6 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                       ),
                 ),
               ),
-              // List of Active Orders
               Expanded(
                 child: RefreshIndicator(
                   key: widget._refreshIndicatorKey,

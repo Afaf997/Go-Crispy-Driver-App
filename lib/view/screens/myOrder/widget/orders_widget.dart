@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:resturant_delivery_boy/data/model/response/current_order.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/provider/localization_provider.dart';
@@ -15,8 +16,9 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderWidget extends StatelessWidget {
   final OrderModel? orderModel;
+  final CurrentOrder? currentOrder;
   final int index;
-  const OrderWidget({Key? key, this.orderModel, required this.index}) : super(key: key);
+  const OrderWidget({Key? key, this.orderModel, required this.index, this.currentOrder}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,7 @@ class OrderWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -113,6 +116,7 @@ class OrderWidget extends StatelessWidget {
                         : 'Address not found',
                   ),
                 ),
+                // Text(currentOrder?.branchId?.toString() ?? 'No branch ID available')
               ],
             ),
             const SizedBox(height: 25),

@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +9,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:resturant_delivery_boy/data/datasource/remote/dio/dio_client.dart';
+import 'package:resturant_delivery_boy/data/datasource/remote/exception/api_error_handler.dart';
+import 'package:resturant_delivery_boy/data/model/response/base/api_response.dart';
 import 'package:resturant_delivery_boy/helper/notification_helper.dart';
 import 'package:resturant_delivery_boy/provider/chat_provider.dart';
 import 'package:resturant_delivery_boy/provider/notificatin_service.dart';
@@ -22,6 +29,8 @@ import 'package:resturant_delivery_boy/provider/tracker_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/view/screens/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
 
@@ -29,22 +38,61 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 AndroidNotificationChannel? channel;
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+DioClient? dioClient;
+SharedPreferences? sharedPreferences;
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    await checkOrdersAndPlayAudio();
+    return Future.value(true);
+  });
+}
+
+Future<void> checkOrdersAndPlayAudio() async {
+  try {
+    final response = await dioClient?.get('${AppConstants.currentOrdersUri}${sharedPreferences?.getString(AppConstants.token)}');
+
+    if (response?.statusCode == 200) {
+     int currentOrderLength = response?.data.length ?? 0;
+
+      // Retrieve stored order length from SharedPreferences
+      int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
+
+      // Check if the current length is greater than the stored length
+      if (currentOrderLength > storedOrderLength) {
+        // Play audio if the current length is greater
+        await _playAudio();
+
+        // Update stored order length with the new value
+        await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
+      }
+    }
+  } catch (e) {
+    log('Error in checkOrdersAndPlayAudio: ${ApiErrorHandler.getMessage(e)}');
+  }
+}
+
+Future<void> _playAudio() async {
+  try {
+    AudioPlayer audioPlayer = AudioPlayer();
+    await audioPlayer.play(AssetSource('assets/audio/audio.wav')); 
+    await audioPlayer.dispose(); 
+  } catch (e) {
+    log('Error playing audio: $e');
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-    NotificationService firebaseApi = NotificationService();
-  await firebaseApi.initNotifications();;
   
-  // Request notification permission
+  NotificationService firebaseApi = NotificationService();
+  await firebaseApi.initNotifications();
+  
   await Permission.notification.request();
-  
-  // Initialize dependency injection
   await di.init();
-  
-  // Initialize notification helper
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
   
-  // Set up Android notification channel if on Android
   if (defaultTargetPlatform == TargetPlatform.android) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel',
@@ -53,10 +101,8 @@ Future<void> main() async {
     );
   }
   
-  // Set background message handler for Firebase Messaging
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
   
-  // Run the app
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => di.sl<StatusProvider>()),
@@ -73,7 +119,6 @@ Future<void> main() async {
     ],
     child: const MyApp(),
   ));
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -96,6 +141,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: ColorResources.COLOR_WHITE,
       ),
+      
       locale: Provider.of<LocalizationProvider>(context).locale,
       localizationsDelegates: const [
         AppLocalization.delegate,
