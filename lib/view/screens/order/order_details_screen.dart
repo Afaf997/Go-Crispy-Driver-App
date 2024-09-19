@@ -600,7 +600,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ///Put label over here
                       label: Text(
                         getTranslated('swip_to_deliver_order', context)!,
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: ColorResources.COLOR_PRIMARY),
                       ),
                       dismissThresholds: 0.5,
                       dismissible: false,
