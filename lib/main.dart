@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:resturant_delivery_boy/data/datasource/remote/dio/dio_client.dart';
 import 'package:resturant_delivery_boy/data/datasource/remote/exception/api_error_handler.dart';
-import 'package:resturant_delivery_boy/data/model/response/base/api_response.dart';
 import 'package:resturant_delivery_boy/helper/notification_helper.dart';
 import 'package:resturant_delivery_boy/provider/chat_provider.dart';
 import 'package:resturant_delivery_boy/provider/notificatin_service.dart';

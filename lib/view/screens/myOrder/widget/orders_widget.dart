@@ -16,7 +16,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderWidget extends StatelessWidget {
   final OrderModel? orderModel;
-  final CurrentOrder? currentOrder;
+  final CurrentOrders? currentOrder;
   final int index;
   const OrderWidget({Key? key, this.orderModel, required this.index, this.currentOrder}) : super(key: key);
 
@@ -117,6 +117,7 @@ class OrderWidget extends StatelessWidget {
                         : 'Address not found',
                   ),
                 ),
+
                 Text(currentOrder?.branchId?.toString() ?? 'No branch ID available')
                 
               ],
