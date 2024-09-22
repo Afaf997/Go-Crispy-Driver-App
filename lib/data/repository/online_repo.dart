@@ -14,14 +14,9 @@ class OnlineRepo {
 
   Future<ApiResponse> getOnlineStatus() async {
     try {
-      final response = await dioClient.get(
-        AppConstants.deliverymanOnlineUri,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer ${sharedPreferences.getString(AppConstants.token)}',
-          },
-        ),
-      );
+
+          final response = await dioClient!.get('${AppConstants.deliverymanOnlineUri}${sharedPreferences!.get(AppConstants.token)}');
+    
       return ApiResponse.withSuccess(response);
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
