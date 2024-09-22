@@ -252,21 +252,21 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
       : '',
   style: rubikRegular.copyWith(fontSize: Dimensions.fontSizeLarge),
 ),
-                          trailing: InkWell(
-                            onTap:orderModel!.deliveryAddress != null ?  () async {
-                              Uri uri = Uri.parse('tel:${orderModel!.deliveryAddress!.contactPersonNumber}');
-                              if (await canLaunchUrl(uri)) {
-                              await launchUrl(uri);
-                              } else {
-                              throw 'Could not launch $uri';
-                              }
-                            } : null,
-                            child: Container(
-                              padding: const EdgeInsets.all(Dimensions.fontSizeLarge),
-                              decoration:const BoxDecoration(shape: BoxShape.circle, color:ColorResources.COLOR_WHITE),
-                              child:  Icon(Icons.call_outlined, color: Theme.of(context).textTheme.bodyLarge?.color),
-                            ),
-                          ),
+                          // trailing: InkWell(
+                          //   onTap:orderModel!.deliveryAddress != null ?  () async {
+                          //     Uri uri = Uri.parse('tel:${orderModel!.deliveryAddress!.contactPersonNumber}');
+                          //     if (await canLaunchUrl(uri)) {
+                          //     await launchUrl(uri);
+                          //     } else {
+                          //     throw 'Could not launch $uri';
+                          //     }
+                          //   } : null,
+                          //   child: Container(
+                          //     padding: const EdgeInsets.all(Dimensions.fontSizeLarge),
+                          //     decoration:const BoxDecoration(shape: BoxShape.circle, color:ColorResources.COLOR_WHITE),
+                          //     child:  Icon(Icons.call_outlined, color: Theme.of(context).textTheme.bodyLarge?.color),
+                          //   ),
+                          // ),
                         ),
 
                       ]),

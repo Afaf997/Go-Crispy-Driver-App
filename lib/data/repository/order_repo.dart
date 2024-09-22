@@ -16,10 +16,10 @@ class OrderRepo {
 Future<ApiResponse> getAllOrders() async {
   try {
     final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
-    log("Token: ${sharedPreferences!.get(AppConstants.token)}");
+    // log("Token: ${sharedPreferences!.get(AppConstants.token)}");
     
     // Logging the full response data
-    log("Response Data: ${response.data[1]}");
+    // log("Response Data: ${response.data[1]}");
     
     return ApiResponse.withSuccess(response);
   } catch (e) {

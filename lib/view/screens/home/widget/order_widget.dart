@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/localization/language_constrants.dart';
 import 'package:resturant_delivery_boy/provider/localization_provider.dart';
+import 'package:resturant_delivery_boy/provider/splash_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
@@ -80,24 +81,47 @@ class HomeOrderWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-            Row(
-              children: [
-                Image.asset(
-                  Images.location,
-                  color: ColorResources.COLOR_BLACK,
-                  height: 15,
-                  width: 15,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    orderModel!.deliveryAddress != null
-                        ? orderModel!.deliveryAddress!.address!
-                        : 'Address not found',
-                  ),
-                ),
-              ],
-            ),
+         Row(
+  children: [
+    Image.asset(
+      Images.location,
+      color: ColorResources.COLOR_BLACK,
+      height: 15,
+      width: 15,
+    ),
+    const SizedBox(width: 10),
+    
+    Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            orderModel!.deliveryAddress != null
+                ? orderModel!.deliveryAddress!.address!
+                : 'Address not found',
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+          
+          const SizedBox(height: 5),
+          
+          Text(
+            orderModel?.deliveryAddress != null
+                ? (Provider.of<SplashProvider>(context, listen: false)
+                        .configModel?.branches
+                        ?.map((branch) => branch.id == orderModel?.branchId ? branch.name : null)
+                        .firstWhere((name) => name != null, orElse: () => 'Default Name'))
+                    ?? 'Default Name'
+                : '',
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.red,fontSize: 12), 
+          ),
+        ],
+      ),
+    ),
+  ],
+),
             const SizedBox(height: 15),
             Row(
               children: [
@@ -107,7 +131,7 @@ class HomeOrderWidget extends StatelessWidget {
                         builder: (_) => OrderDetailsScreen(orderModelItem: orderModel)));
                   },
                   child: Text(
-                    getTranslated('view_details', context)!,
+                    getTranslated('Delivery', context)!,
                     style: const TextStyle(
                       color: ColorResources.kborderyellowColor,
                       fontWeight: FontWeight.w400,
@@ -120,7 +144,7 @@ class HomeOrderWidget extends StatelessWidget {
                   isShowBorder: true,
                   borderColor: ColorResources.Boarder_COLOR,
                   buttonColor: ColorResources.COLOR_WHITE,
-                  btnTxt: getTranslated('Collect', context)!,
+                  btnTxt: getTranslated('Collect Order', context)!,
                   textColor: ColorResources.COLOR_PRIMARY,
                   onTap: () {
                      Navigator.push(context, MaterialPageRoute(builder:(context)=>BranchDetailsScreen(orderModelItem: orderModel) ));
