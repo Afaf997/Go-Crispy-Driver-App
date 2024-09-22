@@ -26,11 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch user info and status info
+
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
     Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     Provider.of<OnlineProvider>(context, listen: false).getInitialStatus(context); 
-     Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context);// Initialize status
+     Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context);
      Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
 
     return Scaffold(
@@ -196,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : const Center(
                                 child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
                               ),
+                              
                       ),
                     ),
                   ),
