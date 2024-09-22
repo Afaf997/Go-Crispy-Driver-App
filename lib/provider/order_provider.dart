@@ -24,7 +24,7 @@ class OrderProvider with ChangeNotifier {
 
  Future getAllOrders(BuildContext context) async {
   ApiResponse apiResponse = await orderRepo!.getAllOrders();
-  // log('API Response Data: ${apiResponse.response?.data}');
+  log('API Response Data: ${apiResponse.response?.data}');
 
   if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
     _currentOrders = [];

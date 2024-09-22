@@ -159,7 +159,6 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                   onRefresh: () => orderProvider.refresh(context),
                   child: orderProvider.currentOrders.isNotEmpty
                       ? ListView.builder(
-                    
                           itemCount: orderProvider.currentOrders.length,
                           itemBuilder: (context, index) => OrderWidget(
                             orderModel: orderProvider.currentOrders[index],

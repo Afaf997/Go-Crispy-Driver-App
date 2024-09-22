@@ -25,7 +25,7 @@ class AppConstants {
   static const String getOrderModel = '/api/v1/delivery-man/order-model?token=';
   static const String register = '/api/v1/auth/delivery-man/register';
     static const String popup='https://project.artisans.qa/go-crispy/api/v1/delivery-man/check-new-orders?delivery_man_id=1';
-
+ static const String swipe='https://project.artisans.qa/go-crispy-new/api/v1/delivery-man/out-of-delivery?order_id=100351';
 
 
   // Shared Key

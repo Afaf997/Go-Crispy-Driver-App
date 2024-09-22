@@ -19,7 +19,7 @@ Future<ApiResponse> getAllOrders() async {
     log("Token: ${sharedPreferences!.get(AppConstants.token)}");
     
     // Logging the full response data
-    log("Response Data: ${response.data.delivery_man_id}");
+    // log("Response Data: ${response.data}");
     
     return ApiResponse.withSuccess(response);
   } catch (e) {
