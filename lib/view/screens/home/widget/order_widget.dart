@@ -120,7 +120,7 @@ class HomeOrderWidget extends StatelessWidget {
                   isShowBorder: true,
                   borderColor: ColorResources.Boarder_COLOR,
                   buttonColor: ColorResources.COLOR_WHITE,
-                  btnTxt: getTranslated('Collect Order', context)!,
+                  btnTxt: getTranslated('Collect', context)!,
                   textColor: ColorResources.COLOR_PRIMARY,
                   onTap: () {
                      Navigator.push(context, MaterialPageRoute(builder:(context)=>BranchDetailsScreen(orderModelItem: orderModel) ));

@@ -1,9 +1,16 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:math';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
+import 'package:resturant_delivery_boy/provider/profile_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
+import 'package:resturant_delivery_boy/data/model/response/config_model.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_details_model.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/helper/date_converter.dart';
@@ -28,18 +35,23 @@ import 'package:resturant_delivery_boy/view/screens/order/widget/custom_divider.
 import 'package:resturant_delivery_boy/view/screens/order/widget/delivery_dialog.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/slider_button.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/timer_view.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class BranchDetailsScreen extends StatefulWidget {
   final OrderModel? orderModelItem;
-  const BranchDetailsScreen({Key? key, this.orderModelItem}) : super(key: key);
+   final ConfigModel? configModel;
+   BranchDetailsScreen({
+    Key? key,
+    this.orderModelItem,
+    this.configModel,
+  }) : super(key: key);
 
   @override
   State<BranchDetailsScreen> createState() => _BranchDetailsScreenState();
 }
 
 class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
+  
+      ConfigModel? configModel;
   OrderModel? orderModel;
   double? deliveryCharge = 0;
   
@@ -48,6 +60,8 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
 
   @override
   void initState() {
+   Provider.of<SplashProvider>(context, listen: false).initConfig(context);
+   
     orderModel = widget.orderModelItem;
 
     _loadData();
@@ -56,6 +70,7 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
 
     super.initState();
   }
+  
 
   _loadData() {
     if(orderModel!.orderAmount == null) {
@@ -85,6 +100,7 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+      Provider.of<SplashProvider>(context, listen: false).initConfig(context);
     return Scaffold(
       backgroundColor: ColorResources.COLOR_WHITE,
       appBar: AppBar(
@@ -227,10 +243,15 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                             ),
                           ),
                           title: Text(
-                            orderModel!.deliveryAddress == null
-                                ? '' : orderModel!.deliveryAddress!.contactPersonName ?? '',
-                            style: rubikRegular.copyWith(fontSize: Dimensions.fontSizeLarge),
-                          ),
+  orderModel?.deliveryAddress != null
+      ? (Provider.of<SplashProvider>(context, listen: false)
+              .configModel?.branches
+              ?.map((branch) => branch.id == orderModel?.branchId ? branch.name : null)
+              .firstWhere((name) => name != null, orElse: () => 'Default Name'))
+          ?? 'Default Name'
+      : '',
+  style: rubikRegular.copyWith(fontSize: Dimensions.fontSizeLarge),
+),
                           trailing: InkWell(
                             onTap:orderModel!.deliveryAddress != null ?  () async {
                               Uri uri = Uri.parse('tel:${orderModel!.deliveryAddress!.contactPersonNumber}');
@@ -702,7 +723,21 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
       ),
     );
   }
-    void _showDirectionOptions(BuildContext context, Position position) {
+  void _showDirectionOptions(BuildContext context, Position position) {
+  var branch = Provider.of<SplashProvider>(context, listen: false)
+      .configModel?.branches
+      ?.firstWhere(
+        (branch) => branch.id == orderModel?.branchId,
+      );
+
+  // Extract latitude and longitude from the branch or fallback to defaults
+  double destinationLatitude = branch?.latitude != null
+      ?double.tryParse(branch?.latitude ?? '23.8103')?.toDouble() ?? 23.8103
+      : 23.8103;
+  double destinationLongitude = branch?.longitude != null
+      ? double.tryParse(branch?.longitude ?? '23.8103')?.toDouble() ?? 23.8103
+      : 90.4125;
+
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -714,11 +749,11 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
             onTap: () async {
               Navigator.pop(context);
               await MapUtils.openMap(
-                double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
-                double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+                destinationLatitude,
+                destinationLongitude,
                 position.latitude,
                 position.longitude,
-                true // Pass true to indicate Google Maps
+                true, // Pass true to indicate Google Maps
               );
             },
           ),
@@ -728,11 +763,11 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
             onTap: () async {
               Navigator.pop(context);
               await MapUtils.openMap(
-                double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
-                double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
+                destinationLatitude,
+                destinationLongitude,
                 position.latitude,
                 position.longitude,
-                false // Pass false to indicate Waze
+                false, // Pass false to indicate Waze
               );
             },
           ),
@@ -783,6 +818,7 @@ class MapUtils {
       throw 'Could not launch $url';
     }
   }
+  
 }
 
 

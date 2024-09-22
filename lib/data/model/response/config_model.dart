@@ -330,7 +330,7 @@ class Branches {
         String? longitude,
         String? latitude,
         String? address,
-        double? coverage}) {
+        double? coverage}) {  
     _id = id;
     _name = name;
     _email = email;
