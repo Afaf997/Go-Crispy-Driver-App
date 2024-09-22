@@ -19,10 +19,12 @@ class OrderWidget extends StatelessWidget {
   final CurrentOrders? currentOrder;
   final int index;
   const OrderWidget({Key? key, this.orderModel, required this.index, this.currentOrder}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
-      log('Current Order: ${currentOrder?.branchId}');
+              log("order model " +orderModel!.branchId.toString());
+      // log('Current Order: ${currentOrder?.branchId}');
+      // log("current orderrr" +currentOrder.toString());
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Container(
@@ -41,6 +43,7 @@ class OrderWidget extends StatelessWidget {
                     Text(
                       getTranslated('order_id', context)!,
                     ),
+          
                     Text(
                       ' # ${orderModel!.id.toString()}',
                     ),
@@ -118,7 +121,7 @@ class OrderWidget extends StatelessWidget {
                   ),
                 ),
 
-                Text(currentOrder?.branchId?.toString() ?? 'No branch ID available')
+                Text(orderModel?.branchId?.toString() ?? 'No branch ID available')
                 
               ],
             ),

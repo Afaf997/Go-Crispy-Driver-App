@@ -36,7 +36,7 @@ class OrderProvider with ChangeNotifier {
     
     _currentOrders = List.from(_currentOrdersReverse.reversed);
   
-    // log('Processed Orders: $_currentOrders');
+    log('Processed Orders:' +_currentOrders[0].deliveryAddress!.longitude.toString() );
   } else {
     ApiChecker.checkApi(apiResponse);
     print('API Error: ${apiResponse.error}');

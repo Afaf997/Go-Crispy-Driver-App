@@ -9,6 +9,7 @@ import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/utill/styles.dart';
 import 'package:resturant_delivery_boy/view/base/custom_button.dart';
+import 'package:resturant_delivery_boy/view/screens/home/widget/branch_location_details.dart';
 import 'package:resturant_delivery_boy/view/screens/order/order_details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -119,18 +120,11 @@ class HomeOrderWidget extends StatelessWidget {
                   isShowBorder: true,
                   borderColor: ColorResources.Boarder_COLOR,
                   buttonColor: ColorResources.COLOR_WHITE,
-                  btnTxt: getTranslated('take_me_there', context)!,
+                  btnTxt: getTranslated('Collect Order', context)!,
                   textColor: ColorResources.COLOR_PRIMARY,
-                  onTap: () async {
-                    try {
-                      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-                      _showDirectionOptions(context, position);
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                       const SnackBar(content: Text('Unable to get current location. Please enable location services.')),
-                      );
-                    }
-                  },
+                  onTap: () {
+                     Navigator.push(context, MaterialPageRoute(builder:(context)=>BranchDetailsScreen(orderModelItem: orderModel) ));
+                  }
                 ),
               ],
             ),

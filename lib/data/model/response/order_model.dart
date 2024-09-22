@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class OrderModel {
   int? id;
+  int? branchId;
   int? userId;
   double? orderAmount;
   double? couponDiscountAmount;
@@ -28,6 +29,7 @@ class OrderModel {
 
   OrderModel(
       {this.id,
+      this.branchId,
         this.userId,
         this.orderAmount,
         this.couponDiscountAmount,
@@ -56,6 +58,7 @@ class OrderModel {
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    branchId = json['branch_id'];
     userId = json['user_id'];
     orderAmount = json['order_amount'].toDouble();
     couponDiscountAmount = json['coupon_discount_amount'].toDouble();
@@ -88,6 +91,7 @@ class OrderModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
+    data['branch_id']=branchId;
     data['user_id'] = userId;
     data['order_amount'] = orderAmount;
     data['coupon_discount_amount'] = couponDiscountAmount;
