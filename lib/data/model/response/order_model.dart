@@ -119,6 +119,8 @@ class OrderModel {
     data['is_guest'] = isGuest;
     return data;
   }
+
+  
 }
 
 class DeliveryAddress {
@@ -277,4 +279,5 @@ class OrderPartialPayment {
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
   };
+
 }

@@ -207,7 +207,6 @@ class OrderWidget extends StatelessWidget {
   Future<void> _openGoogleMap(BuildContext context) async {
     String url =
         'https://www.google.com/maps/dir/?api=1&destination=${orderModel!.deliveryAddress!.latitude},${orderModel!.deliveryAddress!.longitude}&mode=d';
-    log(url);
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url, mode: LaunchMode.externalApplication);
     } else {

@@ -18,9 +18,6 @@ Future<ApiResponse> getAllOrders() async {
     final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
     log("Token: ${sharedPreferences!.get(AppConstants.token)}");
     
-    // Logging the full response data
-    // log("Response Data: ${response.data}");
-    
     return ApiResponse.withSuccess(response);
   } catch (e) {
     // Logging the error
@@ -77,6 +74,8 @@ Future<ApiResponse> performPostRequest() async {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+
   Future<ApiResponse> updatePaymentStatus({String? token, int? orderId, String? status}) async {
     try {
       Response response = await dioClient!.post(
@@ -97,4 +96,37 @@ Future<ApiResponse> performPostRequest() async {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+
+// Future<ApiResponse> outofdelivery({int? orderId}) async {
+//   try {
+//     log("orderid $orderId");
+//     final url = '${AppConstants.swipe}?order_id=$orderId';
+//     Response response = await dioClient!.post(url);
+
+//     log(response.data);
+//     return ApiResponse.withSuccess(response);
+//   } catch (e) {
+//     return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+//   }
+// }
+
+Future<ApiResponse> outofdelivery({int? orderId}) async {
+  try {
+    log("Attempting to update order with ID: $orderId");
+
+    // Make sure the URL is correct and properly formatted
+    final String url = '${AppConstants.swipe}?order_id=$orderId';
+    Response response = await dioClient!.post(url);
+
+    log('Response received: ${response.data}');
+
+    return ApiResponse.withSuccess(response);
+  } catch (e) {
+    log('API Error: ${ApiErrorHandler.getMessage(e)}');
+    return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+  }
+}
+
+
 }

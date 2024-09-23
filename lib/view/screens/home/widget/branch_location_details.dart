@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:resturant_delivery_boy/data/repository/response_model.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -585,135 +586,139 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
 
                   : const SizedBox.shrink(),
 
-              orderModel!.orderStatus != 'delivered' && !orderModel!.isGuest! ? SafeArea(child: Center(
-                // child: Container(
-                //   width: 1170,
-                //   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                //   child: CustomButton(btnTxt: getTranslated('chat_with_customer', context), onTap: (){
-                //     Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(orderModel: orderModel)));
-                //   }),
-                // ),
-              )) : const SizedBox(),
+            orderModel!.orderStatus == 'done' || orderModel!.orderStatus == 'processing' ? Container(
+  height: 50,
+  width: MediaQuery.of(context).size.width,
+  margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
+    border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
+    color: Theme.of(context).canvasColor,
+  ),
+  child: Transform.rotate(
+    angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
+    child: Directionality(
+      textDirection: TextDirection.ltr,
+      child: SliderButton(
+        action: () async {
+          String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
+          ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
+              .updatedeliveryorder(orderId: orderModel!.id);
 
-              orderModel!.orderStatus == 'done' || orderModel!.orderStatus == 'processing' ? Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
-                  color: Theme.of(context).canvasColor,
-                ),
-                child: Transform.rotate(
-                  angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
-                  child: Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: SliderButton(
-                    action: () {
-  MyOrderScreen.checkPermission(context, callBack: () {
-    Provider.of<TrackerProvider>(context, listen: false).setOrderID(orderModel!.id!);
-    Provider.of<TrackerProvider>(context, listen: false).startLocationService();
-    String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-    Provider.of<OrderProvider>(context, listen: false)
-        .updateOrderStatus(token: token, orderId: orderModel!.id, status: 'out_for_delivery');
-    Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
-    Navigator.pop(context);
-  });
-},
-
-
-                      ///Put label over here
-                      label: Text(
-                        getTranslated('swip_to_deliver_order', context)!,
-                      ),
-                      dismissThresholds: 0.5,
-                      dismissible: false,
-                      icon: const Center(
-                          child: Icon(
-                            Icons.double_arrow_sharp,
-                            color: Colors.white,
-                            size: 20.0,
-                            semanticLabel: 'Text to announce in accessibility modes',
-                          )),
-
-                      ///Change All the color and size from here.
-                      radius: 10,
-                      boxShadow: const BoxShadow(blurRadius: 0.0),
-                      buttonColor: ColorResources.COLOR_PRIMARY,
-                      backgroundColor: Theme.of(context).canvasColor,
-                      baseColor: ColorResources.COLOR_PRIMARY,
-                    ),
-                  ),
-                ),
-              )
-                  : orderModel!.orderStatus == 'out_for_delivery' ? Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
-                ),
-                child: Transform.rotate(
-                  angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
-                  child: Directionality(
-                    textDirection: TextDirection.ltr, // set it to rtl
-                    child: SliderButton(
-                      action: () {
-                        String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-
-                        if (orderModel!.paymentStatus == 'paid') {
-                          Provider.of<TrackerProvider>(context, listen: false).stopLocationService();
-                          Provider.of<OrderProvider>(context, listen: false)
-                              .updateOrderStatus(token: token, orderId: orderModel!.id, status: 'delivered',);
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => OrderPlaceScreen(orderID: orderModel!.id.toString())));
-                        } else {
-                          double payableAmount = totalPrice;
-
-                          if(orderModel!.orderPartialPayments != null && orderModel!.orderPartialPayments!.isNotEmpty){
-                            payableAmount = orderModel!.orderPartialPayments?[0].dueAmount ?? 0;
-                          }
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                    child: DeliveryDialog(
-                                      onTap: () {},
-                                      totalPrice: payableAmount,
-                                      orderModel: orderModel,
-                                    ),
-                                  );
-                                });
-                        }
+          if (response.isSuccess) {
+            // Show success popup
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(getTranslated('success', context)!),
+                  content: Text(response.message!),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the popup
                       },
-
-                      ///Put label over here
-                      label: Text(
-                        getTranslated('swipe to pickup', context)!,
-                      ),
-                      dismissThresholds: 0.5,
-                      dismissible: false,
-                      icon: const Center(
-                          child: Icon(
-                            Icons.double_arrow_sharp,
-                            color: Colors.white,
-                            size: 20.0,
-                            semanticLabel: 'Text to announce in accessibility modes',
-                          )),
-
-                      ///Change All the color and size from here.
-                      radius: 10,
-                      boxShadow: const BoxShadow(blurRadius: 2),
-                      buttonColor: ColorResources.COLOR_PRIMARY,
-                      backgroundColor: Theme.of(context).cardColor,
-                      baseColor: ColorResources.COLOR_PRIMARY,
+                      child: Text(getTranslated('ok', context)!),
                     ),
-                  ),
-                ),
-              )
+                  ],
+                );
+              },
+            );
+          }
+        },
+
+        // Put label over here
+        label: Text(
+          getTranslated('swipe_to_deliver_order', context)!,
+        ),
+        dismissThresholds: 0.5,
+        dismissible: false,
+        icon: const Center(
+          child: Icon(
+            Icons.double_arrow_sharp,
+            color: Colors.white,
+            size: 20.0,
+            semanticLabel: 'Text to announce in accessibility modes',
+          ),
+        ),
+
+        // Change All the color and size from here.
+        radius: 10,
+        boxShadow: const BoxShadow(blurRadius: 0.0),
+        buttonColor: ColorResources.COLOR_PRIMARY,
+        backgroundColor: Theme.of(context).canvasColor,
+        baseColor: ColorResources.COLOR_PRIMARY,
+      ),
+    ),
+  ),
+) 
+// Second condition for 'out_for_delivery'
+: orderModel!.orderStatus == 'out_for_delivery' ? Container(
+  height: 50,
+  width: MediaQuery.of(context).size.width,
+  margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
+    border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
+  ),
+  child: Transform.rotate(
+    angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
+    child: Directionality(
+      textDirection: TextDirection.ltr, // set it to rtl
+      child: SliderButton(
+        action: () async {
+          String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
+          ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
+              .updatedeliveryorder(token: token, orderId: orderModel!.id);
+
+          if (response.isSuccess) {
+            // Show success popup
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(getTranslated('success', context)!),
+                  content: Text(response.message!),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the popup
+                      },
+                      child: Text(getTranslated('ok', context)!),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        },
+
+        // Put label over here
+        label: Text(
+          getTranslated('swipe to pickup', context)!,
+        ),
+        dismissThresholds: 0.5,
+        dismissible: false,
+        icon: const Center(
+          child: Icon(
+            Icons.double_arrow_sharp,
+            color: Colors.white,
+            size: 20.0,
+            semanticLabel: 'Text to announce in accessibility modes',
+          ),
+        ),
+
+        // Change All the color and size from here.
+        radius: 10,
+        boxShadow: const BoxShadow(blurRadius: 2),
+        buttonColor: ColorResources.COLOR_PRIMARY,
+        backgroundColor: Theme.of(context).cardColor,
+        baseColor: ColorResources.COLOR_PRIMARY,
+      ),
+    ),
+  ),
+)
+
                   : const SizedBox.shrink(),
 
             ],

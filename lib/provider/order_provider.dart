@@ -24,7 +24,6 @@ class OrderProvider with ChangeNotifier {
 
  Future getAllOrders(BuildContext context) async {
   ApiResponse apiResponse = await orderRepo!.getAllOrders();
-  log('API Response Data: ${apiResponse.response?.data}');
 
   if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
     _currentOrders = [];
@@ -115,6 +114,41 @@ class OrderProvider with ChangeNotifier {
     return responseModel;
   }
 
+Future<ResponseModel> updatedeliveryorder({String? token, int? orderId}) async {
+  _isLoading = true;
+  _feedbackMessage = '';
+  notifyListeners();
+
+  ApiResponse apiResponse = await orderRepo!.outofdelivery(orderId: orderId);
+  ResponseModel? responseModel;
+
+  if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+    // Check if the response contains expected data
+    if (apiResponse.response!.data != null) {
+      _feedbackMessage = apiResponse.response!.data['message'] ?? 'Order updated successfully';
+      log('Success: $_feedbackMessage');
+      responseModel = ResponseModel(_feedbackMessage, true);
+    } else {
+      _feedbackMessage = 'No message found in response';
+      log('Error: No message found in response');
+      responseModel = ResponseModel(_feedbackMessage, false);
+    }
+  } else {
+    // Handle error
+    _feedbackMessage = 'Failed to update order';
+    log('Error: ${apiResponse.error.toString()}');
+    responseModel = ResponseModel(_feedbackMessage, false);
+  }
+
+  _isLoading = false;
+  notifyListeners();
+  return responseModel;
+}
+
+
+
+
+
   Future updatePaymentStatus({String? token, int? orderId, String? status}) async {
     await orderRepo!.updatePaymentStatus(token: token, orderId: orderId, status: status);
     notifyListeners();
@@ -139,4 +173,5 @@ class OrderProvider with ChangeNotifier {
   }
 
   
+
 }
