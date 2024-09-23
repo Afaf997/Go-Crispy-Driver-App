@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:resturant_delivery_boy/data/model/response/current_order.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
 import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
@@ -11,11 +14,14 @@ import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/state_card.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/statistics.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final OrderModel? orderModel;
+  final CurrentOrders? currentOrders;
 
-  HomeScreen({Key? key, this.orderModel}) : super(key: key);
+  HomeScreen({Key? key, this.orderModel, this.currentOrders}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,13 +31,27 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    _saveOrderIdToPreferences();
+  }
 
+  Future<void> _saveOrderIdToPreferences() async {
+        Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
+    if (widget.orderModel != null && widget.orderModel!.id != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('deliveryManId',widget.orderModel.toString());
+      log('Order ID saved: ${widget.orderModel!.deliveryManId}');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
     Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     Provider.of<OnlineProvider>(context, listen: false).getInitialStatus(context); 
-     Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context);
-     Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
+    // Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context,);
+    Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
 
     return Scaffold(
       backgroundColor: ColorResources.kbackgroundColor,
@@ -56,45 +76,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Consumer<OnlineProvider>(
-                            builder: (context, onlineProvider, child) {
-                              bool isOnline = onlineProvider.onlineModel?.status == 'online';
-                              return Row(
-                                children: [
-                                  Icon(
-                                    isOnline ? Icons.circle : Icons.circle,
-                                    color: isOnline ? Colors.green : Colors.red,
-                                    size: 12,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    isOnline ? 'Online' : 'Offline',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Transform.scale(
-                                    scale: 0.7,
-                                    child: Switch(
-                                      value: isOnline,
-                                      onChanged: (bool newValue) {
-                                        onlineProvider.toggleOnlineStatus(context);
-                                      },
-                                      activeColor: ColorResources.COLOR_WHITE,
-                                      activeTrackColor: ColorResources.COLOR_PRIMARY,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                     Row(
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    Consumer<OnlineProvider>(
+      builder: (context, onlineProvider, child) {
+        bool isOnline = onlineProvider.onlineModel?.status == 'online';
+        return Row(
+          children: [
+            Icon(
+              Icons.circle,
+              color: isOnline ? Colors.green : Colors.red,
+              size: 12,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              isOnline ? 'Online' : 'Offline',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            Transform.scale(
+              scale: 0.7,
+              child: Switch(
+                value: isOnline,
+                onChanged: (bool newValue) {
+                  onlineProvider.toggleOnlineStatus(context, newValue);
+                },
+                activeColor: Colors.white,
+                activeTrackColor: Colors.green,
+              ),
+            ),
+          ],
+        );
+      },
+    ),
+  ],
+),
                       Row(
                         children: [
                           Consumer<ProfileProvider>(

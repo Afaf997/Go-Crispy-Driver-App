@@ -9,18 +9,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OnlineRepo {
   final DioClient dioClient;
   final SharedPreferences sharedPreferences;
-                    
+
   OnlineRepo({required this.dioClient, required this.sharedPreferences});
 
   Future<ApiResponse> getOnlineStatus() async {
     try {
+      // Retrieve delivery man ID from shared preferences
+      int? deliveryManId = sharedPreferences.getInt('delivery_man_id');
+      log("Retrieved Delivery Man ID for Online Status: $deliveryManId");
+
       final response = await dioClient.get(
-        AppConstants.deliverymanOnlineUri,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer ${sharedPreferences.getString(AppConstants.token)}',
-          },
-        ),
+        '${AppConstants.deliverymanOnlineUri}&delivery_man_id=$deliveryManId',
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
@@ -29,19 +28,15 @@ class OnlineRepo {
   }
 
   Future<ApiResponse> getOfflineStatus() async {
-    //  log(sharedPreferences.getString(AppConstants.token).toString());            
     try {
+      // Retrieve delivery man ID from shared preferences
+      int? deliveryManId = sharedPreferences.getInt('delivery_man_id');
+      log("Retrieved Delivery Man ID for Offline Status: $deliveryManId");
+
       final response = await dioClient.get(
-        AppConstants.deliveryOfflineUri,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer ${sharedPreferences.getString(AppConstants.token)}',
-          },
-        ),
+        '${AppConstants.deliveryOfflineUri}&delivery_man_id=$deliveryManId',
       );
-   
       return ApiResponse.withSuccess(response);
-      
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }

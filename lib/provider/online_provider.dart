@@ -14,31 +14,26 @@ class OnlineProvider with ChangeNotifier {
 
   bool get isLoading => _isLoading;
   OnlineModel? get onlineModel => _onlineModel;
+Future<void> toggleOnlineStatus(BuildContext context, bool newValue) async {
+  _isLoading = true;
+  notifyListeners();
 
-  Future<void> toggleOnlineStatus(BuildContext context) async {
-    _isLoading = true;
-    notifyListeners();
-
-    bool isCurrentlyOnline = _onlineModel?.status == 'online';
-
-    ApiResponse apiResponse;
-    if (isCurrentlyOnline) {
-      apiResponse = await onlineRepo!.getOfflineStatus();
-    } else {
-      apiResponse = await onlineRepo!.getOnlineStatus();
-    }
-
-    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      _onlineModel = OnlineModel.fromJson(apiResponse.response!.data);
-      _onlineModel!.status = isCurrentlyOnline ? 'offline' : 'online';
-    } else {
-      ApiChecker.checkApi(apiResponse);
-    }
-
-    _isLoading = false;
-    notifyListeners();
+  ApiResponse apiResponse;
+  if (newValue) {
+    apiResponse = await onlineRepo!.getOnlineStatus();
+  } else {
+    apiResponse = await onlineRepo!.getOfflineStatus();
   }
 
+  if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+    _onlineModel = OnlineModel(status: newValue ? 'online' : 'offline');
+  } else {
+    ApiChecker.checkApi(apiResponse);
+  }
+
+  _isLoading = false;
+  notifyListeners();
+}
   Future<void> getInitialStatus(BuildContext context) async {
     _isLoading = true;
     notifyListeners();

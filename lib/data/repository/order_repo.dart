@@ -13,19 +13,6 @@ class OrderRepo {
   final SharedPreferences? sharedPreferences;
 
   OrderRepo({required this.dioClient, required this.sharedPreferences});
-Future<ApiResponse> getAllOrders() async {
-  try {
-    final response = await dioClient!.get('${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}');
-    log("Token: ${sharedPreferences!.get(AppConstants.token)}");
-    
-    return ApiResponse.withSuccess(response);
-  } catch (e) {
-    // Logging the error
-    log("Error: ${ApiErrorHandler.getMessage(e)}");
-    
-    return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-  }
-}
 
 
 
@@ -97,19 +84,27 @@ Future<ApiResponse> performPostRequest() async {
     }
   }
 
+Future<ApiResponse> getAllOrders() async {
+  try {
+    final response = await dioClient!.get(
+      '${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}'
+    );
+    if (response.data.isNotEmpty) {
+      log(response.data[0].toString());
+      int deliveryManId = response.data[0]['delivery_man_id'];
+      await sharedPreferences!.setInt('delivery_man_id', deliveryManId);
+      
+      // Retrieve and log the delivery_man_id from shared preferences
+      int? storedDeliveryManId = sharedPreferences!.getInt('delivery_man_id');
+      log("Stored Delivery Man ID from Shared Preferences: $storedDeliveryManId");
+    }
 
-// Future<ApiResponse> outofdelivery({int? orderId}) async {
-//   try {
-//     log("orderid $orderId");
-//     final url = '${AppConstants.swipe}?order_id=$orderId';
-//     Response response = await dioClient!.post(url);
-
-//     log(response.data);
-//     return ApiResponse.withSuccess(response);
-//   } catch (e) {
-//     return ApiResponse.withError(ApiErrorHandler.getMessage(e));
-//   }
-// }
+    return ApiResponse.withSuccess(response);
+  } catch (e) {
+    log("Error: ${ApiErrorHandler.getMessage(e)}");
+    return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+  }
+}
 
 Future<ApiResponse> outofdelivery({int? orderId}) async {
   try {

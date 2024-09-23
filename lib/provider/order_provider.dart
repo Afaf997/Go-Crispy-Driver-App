@@ -165,6 +165,7 @@ Future<ResponseModel> updatedeliveryorder({String? token, int? orderId}) async {
     ApiResponse apiResponse = await orderRepo!.getOrderModel(orderID);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       _currentOrderModel = OrderModel.fromJson(apiResponse.response!.data);
+      log(_currentOrderModel.toString());
     } else {
       ApiChecker.checkApi(apiResponse);
     }
