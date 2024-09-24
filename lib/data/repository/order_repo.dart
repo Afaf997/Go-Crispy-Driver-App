@@ -89,6 +89,7 @@ Future<ApiResponse> getAllOrders() async {
     final response = await dioClient!.get(
       '${AppConstants.currentOrdersUri}${sharedPreferences!.get(AppConstants.token)}'
     );
+        //  log("model"+response.data.toString());
     if (response.data.isNotEmpty) {
       log(response.data[0].toString());
       int deliveryManId = response.data[0]['delivery_man_id'];
