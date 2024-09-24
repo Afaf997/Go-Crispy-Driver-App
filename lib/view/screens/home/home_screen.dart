@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-              Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context,true);
+      // Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context,true);
     _saveOrderIdToPreferences();
     _fetchInitialOnlineStatus();
   }
