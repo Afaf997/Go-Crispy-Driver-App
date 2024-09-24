@@ -114,7 +114,6 @@ class OrderHistoryScreen extends StatelessWidget {
                       ),
               ) : Center(child: Text(
           getTranslated('no_history_available', context)!,
-          style: Theme.of(context).textTheme.displaySmall,
         )) : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor))),
       ),
     );

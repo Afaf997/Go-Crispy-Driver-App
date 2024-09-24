@@ -50,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
     Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     Provider.of<OnlineProvider>(context, listen: false).getInitialStatus(context); 
-    // Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context,);
     Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
 
     return Scaffold(
@@ -206,16 +205,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         child: orderProvider.currentOrders.isNotEmpty
                             ? ListView.builder(
-                                itemCount: 5,
+                                itemCount: 15,
                                 physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                                 itemBuilder: (context, index) => HomeOrderWidget(
                                   orderModel: orderProvider.currentOrders[index],
                                   index: index,
                                 ),
                               )
-                            : const Center(
-                                child: CircularProgressIndicator(color: ColorResources.COLOR_PRIMARY,),
-                              ),
+                            :const Center(child: Text("Orders not available")),
                               
                       ),
                     ),

@@ -165,11 +165,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                             index: index,
                           ),
                         )
-                      : const Center(
-                          child: CircularProgressIndicator(
-                            color: ColorResources.COLOR_PRIMARY,
-                          ),
-                        ),
+                      : const Center(child: Text("Orders not available")),
                 ),
               ),
             ],
