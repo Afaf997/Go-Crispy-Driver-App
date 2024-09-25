@@ -583,13 +583,13 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
         child: Directionality(
           textDirection: TextDirection.ltr,
           child: _isPickedUp 
-          ? Center( // Already picked up message
+          ? Center( 
               child: Text(
-                getTranslated('already_picked_up', context)!,
+                getTranslated('already picked up', context)!,
                 style: TextStyle(color: Colors.green),
               ),
             )
-          : SliderButton( // Slider Button for action
+          : SliderButton( 
               action: () async {
                 String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
                 ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
@@ -602,7 +602,7 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text(getTranslated('success', context)!),
-                          content: Text(response.message!),
+                          content:const Text("Successfully picked the order"),
                           actions: <Widget>[
                             TextButton(
                               onPressed: () {

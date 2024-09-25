@@ -1,3 +1,4 @@
+import 'dart:async'; // Add this import for Timer functionality
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +27,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-      // Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context,true);
     _saveOrderIdToPreferences();
     _fetchInitialOnlineStatus();
+    
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
+    });
   }
 
   Future<void> _saveOrderIdToPreferences() async {
@@ -47,6 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final onlineProvider = Provider.of<OnlineProvider>(context, listen: false);
     String deliveryManId = (await SharedPreferences.getInstance()).getString('deliveryManId') ?? '1'; // Change as necessary
     onlineProvider.getInitialStatus(context, deliveryManId); // Fetch the initial status
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when the screen is disposed
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
