@@ -110,13 +110,11 @@ Future<ApiResponse> getAllOrders() async {
 Future<ApiResponse> outofdelivery({int? orderId}) async {
   try {
     log("Attempting to update order with ID: $orderId");
-
-    // Make sure the URL is correct and properly formatted
+    
     final String url = '${AppConstants.swipe}?order_id=$orderId';
     Response response = await dioClient!.post(url);
 
     log('Response received: ${response.data}');
-
     return ApiResponse.withSuccess(response);
   } catch (e) {
     log('API Error: ${ApiErrorHandler.getMessage(e)}');

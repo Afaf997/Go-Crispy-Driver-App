@@ -599,7 +599,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                       ///Put label over here
                       label: Text(
-                        getTranslated('swip_to_deliver_orrrrder', context)!,
+                        getTranslated('swip_to_deliver_order', context)!,
                       ),
                       dismissThresholds: 0.5,
                       dismissible: false,

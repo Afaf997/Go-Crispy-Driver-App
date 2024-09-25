@@ -253,21 +253,6 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
       : '',
   style: rubikRegular.copyWith(fontSize: Dimensions.fontSizeLarge),
 ),
-                          // trailing: InkWell(
-                          //   onTap:orderModel!.deliveryAddress != null ?  () async {
-                          //     Uri uri = Uri.parse('tel:${orderModel!.deliveryAddress!.contactPersonNumber}');
-                          //     if (await canLaunchUrl(uri)) {
-                          //     await launchUrl(uri);
-                          //     } else {
-                          //     throw 'Could not launch $uri';
-                          //     }
-                          //   } : null,
-                          //   child: Container(
-                          //     padding: const EdgeInsets.all(Dimensions.fontSizeLarge),
-                          //     decoration:const BoxDecoration(shape: BoxShape.circle, color:ColorResources.COLOR_WHITE),
-                          //     child:  Icon(Icons.call_outlined, color: Theme.of(context).textTheme.bodyLarge?.color),
-                          //   ),
-                          // ),
                         ),
 
                       ]),
@@ -567,13 +552,9 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
         btnTxt: getTranslated('Branch location', context),
         onTap: () async {
           try {
-            // Request the current position
             Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-            
-            // Show options to choose between Google Maps and Waze
             _showDirectionOptions(context, position);
           } catch (e) {
-            // Handle any errors, such as location permissions being denied
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Unable to get current location. Please enable location services.')),
             );
@@ -600,32 +581,38 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
     child: Directionality(
       textDirection: TextDirection.ltr,
       child: SliderButton(
-        action: () async {
-          String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-          ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
-              .updatedeliveryorder(orderId: orderModel!.id);
+    action: () async {
+  String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
+  ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
+      .updatedeliveryorder(token: token, orderId: orderModel!.id);
 
-          if (response.isSuccess) {
-            // Show success popup
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(getTranslated('success', context)!),
-                  content: Text(response.message!),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the popup
-                      },
-                      child: Text(getTranslated('ok', context)!),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
+  if (response.isSuccess) {
+    // Show success popup after the current frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(getTranslated('success', context)!),
+            content: Text(response.message!),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the popup
+                },
+                child: Text(getTranslated('ok', context)!),
+              ),
+            ],
+          );
         },
+      );
+    });
+  } else {
+    // You can log an error message or show a different dialog
+    // log('Error: ${response.message}');
+  }
+},
+
 
         // Put label over here
         label: Text(

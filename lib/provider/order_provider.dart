@@ -123,7 +123,6 @@ Future<ResponseModel> updatedeliveryorder({String? token, int? orderId}) async {
   ResponseModel? responseModel;
 
   if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-    // Check if the response contains expected data
     if (apiResponse.response!.data != null) {
       _feedbackMessage = apiResponse.response!.data['message'] ?? 'Order updated successfully';
       log('Success: $_feedbackMessage');
@@ -134,7 +133,6 @@ Future<ResponseModel> updatedeliveryorder({String? token, int? orderId}) async {
       responseModel = ResponseModel(_feedbackMessage, false);
     }
   } else {
-    // Handle error
     _feedbackMessage = 'Failed to update order';
     log('Error: ${apiResponse.error.toString()}');
     responseModel = ResponseModel(_feedbackMessage, false);
