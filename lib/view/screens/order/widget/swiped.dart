@@ -31,15 +31,16 @@ import 'package:resturant_delivery_boy/view/screens/order/widget/timer_view.dart
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class OrderDetailsScreen extends StatefulWidget {
+class swipedScreen extends StatefulWidget {
   final OrderModel? orderModelItem;
-  const OrderDetailsScreen({Key? key, this.orderModelItem}) : super(key: key);
+  const swipedScreen({Key? key, this.orderModelItem}) : super(key: key);
 
   @override
-  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+  State<swipedScreen> createState() => _swipedScreenstate();
 }
 
-class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+// ignore: camel_case_types
+class _swipedScreenstate extends State<swipedScreen> {
   OrderModel? orderModel;
   double? deliveryCharge = 0;
   
@@ -531,153 +532,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   ],
                 ),
               ),
-              orderModel!.orderStatus == 'processing' || orderModel!.orderStatus == 'out_for_delivery'
-                  ?Center(
-  child: Padding(
-    padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-    child: SizedBox(
-      width: 1170,
-      child: CustomButton(
-        btnTxt: getTranslated('direction', context),
-        onTap: () async {
-          try {
-            Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
             
-            _showDirectionOptions(context, position);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Unable to get current location. Please enable location services.')),
-            );
-          }
-        },
-      ),
-    ),
-  ),
-)
-
-                  : const SizedBox.shrink(),
-
-              orderModel!.orderStatus == 'done' || orderModel!.orderStatus == 'processing' ? Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
-                  color: Theme.of(context).canvasColor,
-                ),
-                child: Transform.rotate(
-                  angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
-                  child: Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: SliderButton(
-                    action: () {
-  MyOrderScreen.checkPermission(context, callBack: () {
-    Provider.of<TrackerProvider>(context, listen: false).setOrderID(orderModel!.id!);
-    Provider.of<TrackerProvider>(context, listen: false).startLocationService();
-    String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-    Provider.of<OrderProvider>(context, listen: false)
-        .updateOrderStatus(token: token, orderId: orderModel!.id, status: 'out_for_delivery');
-    Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
-    Navigator.pop(context);
-  });
-},
-
-
-                      ///Put label over here
-                      label: Text(
-                        getTranslated('swip_to_deliver_order', context)!,
-                      ),
-                      dismissThresholds: 0.5,
-                      dismissible: false,
-                      icon: const Center(
-                          child: Icon(
-                            Icons.double_arrow_sharp,
-                            color: Colors.white,
-                            size: 20.0,
-                            semanticLabel: 'Text to announce in accessibility modes',
-                          )),
-
-                      ///Change All the color and size from here.
-                      radius: 10,
-                      boxShadow: const BoxShadow(blurRadius: 0.0),
-                      buttonColor: ColorResources.COLOR_PRIMARY,
-                      backgroundColor: Theme.of(context).canvasColor,
-                      baseColor: ColorResources.COLOR_PRIMARY,
-                    ),
-                  ),
-                ),
-              )
-                  : orderModel!.orderStatus == 'out_for_delivery' ? Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-                  border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
-                ),
-                child: Transform.rotate(
-                  angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
-                  child: Directionality(
-                    textDirection: TextDirection.ltr, // set it to rtl
-                    child: SliderButton(
-                      action: () {
-                        String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-
-                        if (orderModel!.paymentStatus == 'paid') {
-                          Provider.of<TrackerProvider>(context, listen: false).stopLocationService();
-                          Provider.of<OrderProvider>(context, listen: false)
-                              .updateOrderStatus(token: token, orderId: orderModel!.id, status: 'delivered',);
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => OrderPlaceScreen(orderID: orderModel!.id.toString())));
-                        } else {
-                          double payableAmount = totalPrice;
-
-                          if(orderModel!.orderPartialPayments != null && orderModel!.orderPartialPayments!.isNotEmpty){
-                            payableAmount = orderModel!.orderPartialPayments?[0].dueAmount ?? 0;
-                          }
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-                                    child: DeliveryDialog(
-                                      onTap: () {},
-                                      totalPrice: payableAmount,
-                                      orderModel: orderModel,
-                                    ),
-                                  );
-                                });
-                        }
-                      },
-
-                      ///Put label over here
-                      label: Text(
-                        getTranslated('swip_to_confirm_order', context)!,
-                      ),
-                      dismissThresholds: 0.5,
-                      dismissible: false,
-                      icon: const Center(
-                          child: Icon(
-                            Icons.double_arrow_sharp,
-                            color: Colors.white,
-                            size: 20.0,
-                            semanticLabel: 'Text to announce in accessibility modes',
-                          )),
-
-                      ///Change All the color and size from here.
-                      radius: 10,
-                      boxShadow: const BoxShadow(blurRadius: 2),
-                      buttonColor: ColorResources.COLOR_PRIMARY,
-                      backgroundColor: Theme.of(context).cardColor,
-                      baseColor: ColorResources.COLOR_PRIMARY,
-                    ),
-                  ),
-                ),
-              )
-                  : const SizedBox.shrink(),
-
             ],
           )
               : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY)));

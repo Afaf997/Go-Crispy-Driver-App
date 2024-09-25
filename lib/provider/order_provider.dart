@@ -114,7 +114,7 @@ class OrderProvider with ChangeNotifier {
     return responseModel;
   }
 
-Future<ResponseModel> updatedeliveryorder({String? token, int? orderId}) async {
+Future<ResponseModel> updatedeliveryorder({String? token, int? orderId,}) async {
   _isLoading = true;
   _feedbackMessage = '';
   notifyListeners();

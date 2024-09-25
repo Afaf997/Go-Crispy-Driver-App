@@ -51,6 +51,7 @@ class BranchDetailsScreen extends StatefulWidget {
 }
 
 class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
+  bool _isPickedUp = false; 
   
       ConfigModel? configModel;
   OrderModel? orderModel;
@@ -567,150 +568,87 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
 
                   : const SizedBox.shrink(),
 
-            orderModel!.orderStatus == 'done' || orderModel!.orderStatus == 'processing' ? Container(
-  height: 50,
-  width: MediaQuery.of(context).size.width,
-  margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-    border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
-    color: Theme.of(context).canvasColor,
-  ),
-  child: Transform.rotate(
-    angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
-    child: Directionality(
-      textDirection: TextDirection.ltr,
-      child: SliderButton(
-    action: () async {
-  String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-  ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
-      .updatedeliveryorder(token: token, orderId: orderModel!.id);
-
-  if (response.isSuccess) {
-    // Show success popup after the current frame is rendered
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(getTranslated('success', context)!),
-            content: Text(response.message!),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the popup
-                },
-                child: Text(getTranslated('ok', context)!),
+       orderModel!.orderStatus == 'done' || orderModel!.orderStatus == 'processing'
+  ? Container(
+      height: 50,
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
+        color: Theme.of(context).canvasColor,
+      ),
+      child: Transform.rotate(
+        angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: _isPickedUp 
+          ? Center( // Already picked up message
+              child: Text(
+                getTranslated('already_picked_up', context)!,
+                style: TextStyle(color: Colors.green),
               ),
-            ],
-          );
-        },
-      );
-    });
-  } else {
-    // You can log an error message or show a different dialog
-    // log('Error: ${response.message}');
-  }
-},
+            )
+          : SliderButton( // Slider Button for action
+              action: () async {
+                String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
+                ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
+                    .updatedeliveryorder(token: token, orderId: orderModel!.id);
 
-
-        // Put label over here
-        label: Text(
-          getTranslated('swipe_to_deliver_order', context)!,
-        ),
-        dismissThresholds: 0.5,
-        dismissible: false,
-        icon: const Center(
-          child: Icon(
-            Icons.double_arrow_sharp,
-            color: Colors.white,
-            size: 20.0,
-            semanticLabel: 'Text to announce in accessibility modes',
-          ),
-        ),
-
-        // Change All the color and size from here.
-        radius: 10,
-        boxShadow: const BoxShadow(blurRadius: 0.0),
-        buttonColor: ColorResources.COLOR_PRIMARY,
-        backgroundColor: Theme.of(context).canvasColor,
-        baseColor: ColorResources.COLOR_PRIMARY,
-      ),
-    ),
-  ),
-) 
-// Second condition for 'out_for_delivery'
-: orderModel!.orderStatus == 'out_for_delivery' ? Container(
-  height: 50,
-  width: MediaQuery.of(context).size.width,
-  margin: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(Dimensions.paddingSizeSmall),
-    border: Border.all(color: Theme.of(context).dividerColor.withOpacity(.05)),
-  ),
-  child: Transform.rotate(
-    angle: Provider.of<LocalizationProvider>(context).isLtr ? pi * 2 : pi, // in radians
-    child: Directionality(
-      textDirection: TextDirection.ltr, // set it to rtl
-      child: SliderButton(
-        action: () async {
-          String token = Provider.of<AuthProvider>(context, listen: false).getUserToken();
-          ResponseModel response = await Provider.of<OrderProvider>(context, listen: false)
-              .updatedeliveryorder(token: token, orderId: orderModel!.id);
-
-          if (response.isSuccess) {
-            // Show success popup
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(getTranslated('success', context)!),
-                  content: Text(response.message!),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the popup
+                if (response.isSuccess) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(getTranslated('success', context)!),
+                          content: Text(response.message!),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isPickedUp = true; // Update the state to mark as picked up
+                                });
+                                Navigator.of(context).pop(); // Close the popup
+                              },
+                              child: Text(getTranslated('ok', context)!),
+                            ),
+                          ],
+                        );
                       },
-                      child: Text(getTranslated('ok', context)!),
-                    ),
-                  ],
-                );
+                    );
+                  });
+                } else {
+                  // Handle failure case if needed
+                }
               },
-            );
-          }
-        },
-
-        // Put label over here
-        label: Text(
-          getTranslated('swipe to pickup', context)!,
+              label: Text(
+                getTranslated('swipe to pickup', context)!,
+              ),
+              dismissThresholds: 0.5,
+              dismissible: false,
+              icon: const Center(
+                child: Icon(
+                  Icons.double_arrow_sharp,
+                  color: Colors.white,
+                  size: 20.0,
+                  semanticLabel: 'Text to announce in accessibility modes',
+                ),
+              ),
+              radius: 10,
+              boxShadow: const BoxShadow(blurRadius: 0.0),
+              buttonColor: ColorResources.COLOR_PRIMARY,
+              backgroundColor: Theme.of(context).canvasColor,
+              baseColor: ColorResources.COLOR_PRIMARY,
+            ),
         ),
-        dismissThresholds: 0.5,
-        dismissible: false,
-        icon: const Center(
-          child: Icon(
-            Icons.double_arrow_sharp,
-            color: Colors.white,
-            size: 20.0,
-            semanticLabel: 'Text to announce in accessibility modes',
-          ),
-        ),
-
-        // Change All the color and size from here.
-        radius: 10,
-        boxShadow: const BoxShadow(blurRadius: 2),
-        buttonColor: ColorResources.COLOR_PRIMARY,
-        backgroundColor: Theme.of(context).cardColor,
-        baseColor: ColorResources.COLOR_PRIMARY,
       ),
-    ),
-  ),
-)
-
-                  : const SizedBox.shrink(),
+    )
+  : const SizedBox.shrink()
 
             ],
           )
-              : Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY)));
+              : const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(ColorResources.COLOR_PRIMARY)));
         },
       ),
     );

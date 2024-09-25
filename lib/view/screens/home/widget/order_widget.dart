@@ -141,11 +141,13 @@ class HomeOrderWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 20),
                 CustomButton(
-                  isShowBorder: true,
-                  borderColor: ColorResources.Boarder_COLOR,
-                  buttonColor: ColorResources.COLOR_WHITE,
-                  btnTxt: getTranslated('Collect Order', context)!,
-                  textColor: ColorResources.COLOR_PRIMARY,
+        isShowBorder: true,
+        borderColor: ColorResources.Boarder_COLOR,
+        buttonColor: ColorResources.COLOR_WHITE,
+        btnTxt: orderModel!.orderStatus == 'out_for_delivery'
+            ? getTranslated('Already Collected', context)!
+            : getTranslated('Collect Order', context)!,
+        textColor: ColorResources.COLOR_PRIMARY,
                   onTap: () {
                      Navigator.push(context, MaterialPageRoute(builder:(context)=>BranchDetailsScreen(orderModelItem: orderModel) ));
                   }
