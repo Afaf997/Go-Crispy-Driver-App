@@ -240,4 +240,4 @@ class MapUtils {
     bool canLaunchWaze = await canLaunchUrl(Uri.parse(wazeUrl));
   }
 }
-
+  

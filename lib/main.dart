@@ -32,7 +32,6 @@ import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
 import 'dart:developer';
 
-
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 AndroidNotificationChannel? channel;
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
@@ -59,7 +58,7 @@ Future<void> checkOrdersAndPlayAudio() async {
       int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
 
       if (currentOrderLength > storedOrderLength) {
-        await _playAudio();
+        await _playAudio(); // Called without context for background tasks
         await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
       }
     }
@@ -68,33 +67,63 @@ Future<void> checkOrdersAndPlayAudio() async {
   }
 }
 
-Future<void> _playAudio() async {
+// Audio playback with optional BuildContext
+Future<void> _playAudio([BuildContext? context]) async {
   try {
     AudioPlayer audioPlayer = AudioPlayer();
-    await audioPlayer.play(AssetSource('assets/image/audio.wav'));
+    await audioPlayer.play(AssetSource('assets/audio.wav'));
     await audioPlayer.dispose();
   } catch (e) {
     log('Error playing audio: $e');
+    if (context != null) {
+      _showErrorDialog(context, e.toString());
+    }
   }
+}
+
+// Error dialog display
+void _showErrorDialog(BuildContext context, String errorMessage) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text('Error playing audio: $errorMessage'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Firebase initialization
   await Firebase.initializeApp();
   
   NotificationService firebaseApi = NotificationService();
   await firebaseApi.initNotifications();
   
-  await Permission.notification.request();
+  // Request notification permission
+  var status = await Permission.notification.status;
+  if (!status.isGranted) {
+    await Permission.notification.request();
+  }
   
   await di.init();
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
   
-  // Initialize Workmanager
+  // Initialize WorkManager for background tasks
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
   
-  // Scheduling one-time task with 10-second delay (for testing)
+  // Schedule a one-time task (testing delay)
   Workmanager().registerOneOffTask(
     fetchOrdersTask,
     fetchOrdersTask,
@@ -162,6 +191,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Utility for accessing navigator context globally
 class Get {
   static BuildContext? get context => _navigatorKey.currentContext;
   static NavigatorState? get navigator => _navigatorKey.currentState;
