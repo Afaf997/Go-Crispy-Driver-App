@@ -95,7 +95,6 @@ Future<ApiResponse> getAllOrders() async {
       int deliveryManId = response.data[0]['delivery_man_id'];
       await sharedPreferences!.setInt('delivery_man_id', deliveryManId);
       
-      // Retrieve and log the delivery_man_id from shared preferences
       int? storedDeliveryManId = sharedPreferences!.getInt('delivery_man_id');
       // log("Stored Delivery Man ID from Shared Preferences: $storedDeliveryManId");
     }

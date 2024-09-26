@@ -11,7 +11,6 @@ import 'package:resturant_delivery_boy/utill/dimensions.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
 import 'package:resturant_delivery_boy/view/screens/myOrder/widget/orders_widget.dart';
 import 'package:resturant_delivery_boy/view/screens/order/widget/permission_dialog.dart';
-import '../../../data/model/response/order_model.dart';
 
 class MyOrderScreen extends StatefulWidget {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =

@@ -30,7 +30,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
-import 'dart:developer';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 AndroidNotificationChannel? channel;
@@ -41,7 +40,6 @@ SharedPreferences? sharedPreferences;
 
 const fetchOrdersTask = "fetchOrdersTask";
 
-// Background callback for WorkManager
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     await checkOrdersAndPlayAudio();
@@ -70,8 +68,16 @@ Future<void> checkOrdersAndPlayAudio() async {
 // Audio playback with optional BuildContext
 Future<void> _playAudio([BuildContext? context]) async {
   try {
+    log('Attempting to play audio');
     AudioPlayer audioPlayer = AudioPlayer();
-    await audioPlayer.play(AssetSource('assets/audio.wav'));
+    await audioPlayer.play(AssetSource('audio/audio.wav')).then((value) {
+      log('Audio playback successful');
+    }).catchError((error) {
+      log('Error playing audio: $error');
+    });
+
+    await Future.delayed(const Duration(seconds: 2)); // Optional delay to allow audio to play
+
     await audioPlayer.dispose();
   } catch (e) {
     log('Error playing audio: $e');
@@ -191,7 +197,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Utility for accessing navigator context globally
 class Get {
   static BuildContext? get context => _navigatorKey.currentContext;
   static NavigatorState? get navigator => _navigatorKey.currentState;
