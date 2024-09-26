@@ -91,13 +91,13 @@ Future<ApiResponse> getAllOrders() async {
     );
         //  log("model"+response.data.toString());
     if (response.data.isNotEmpty) {
-      log(response.data[0].toString());
+      // log(response.data[0].toString());
       int deliveryManId = response.data[0]['delivery_man_id'];
       await sharedPreferences!.setInt('delivery_man_id', deliveryManId);
       
       // Retrieve and log the delivery_man_id from shared preferences
       int? storedDeliveryManId = sharedPreferences!.getInt('delivery_man_id');
-      log("Stored Delivery Man ID from Shared Preferences: $storedDeliveryManId");
+      // log("Stored Delivery Man ID from Shared Preferences: $storedDeliveryManId");
     }
 
     return ApiResponse.withSuccess(response);

@@ -15,7 +15,7 @@ class OnlineRepo {
   Future<ApiResponse> getOnlineStatus() async {
     try {
       int? deliveryManId = sharedPreferences.getInt('delivery_man_id');
-      log("Retrieved Delivery Man ID for Online Status: $deliveryManId");
+      // log("Retrieved Delivery Man ID for Online Status: $deliveryManId");
 
       final response = await dioClient.get(
         '${AppConstants.deliverymanOnlineUri}&delivery_man_id=$deliveryManId',
@@ -29,7 +29,7 @@ class OnlineRepo {
   Future<ApiResponse> getOfflineStatus() async {
     try {
       int? deliveryManId = sharedPreferences.getInt('delivery_man_id');
-      log("Retrieved Delivery Man ID for Offline Status: $deliveryManId");
+      // log("Retrieved Delivery Man ID for Offline Status: $deliveryManId");
 
       final response = await dioClient.get(
         '${AppConstants.deliveryOfflineUri}&delivery_man_id=$deliveryManId',
