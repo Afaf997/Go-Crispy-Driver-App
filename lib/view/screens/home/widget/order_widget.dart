@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,8 @@ import 'package:url_launcher/url_launcher_string.dart';
 class HomeOrderWidget extends StatelessWidget {
   final OrderModel? orderModel;
   final int index;
-  const HomeOrderWidget({Key? key, this.orderModel, required this.index}) : super(key: key);
+  const HomeOrderWidget({Key? key, this.orderModel, required this.index})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +60,16 @@ class HomeOrderWidget extends StatelessWidget {
                   children: [
                     Container(),
                     Positioned(
-                      right: Provider.of<LocalizationProvider>(context).isLtr ? 0 : null,
-                      left: Provider.of<LocalizationProvider>(context).isLtr ? null : 0,
+                      right: Provider.of<LocalizationProvider>(context).isLtr
+                          ? 0
+                          : null,
+                      left: Provider.of<LocalizationProvider>(context).isLtr
+                          ? null
+                          : 0,
                       top: -10,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 10),
                         decoration: BoxDecoration(
                           color: ColorResources.kbordergreenColor,
                           borderRadius: BorderRadius.circular(10),
@@ -81,54 +88,63 @@ class HomeOrderWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 15),
-         Row(
-  children: [
-    Image.asset(
-      Images.location,
-      color: ColorResources.COLOR_BLACK,
-      height: 15,
-      width: 15,
-    ),
-    const SizedBox(width: 10),
-    
-    Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            orderModel!.deliveryAddress != null
-                ? orderModel!.deliveryAddress!.address!
-                : 'Address not found',
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          
-          const SizedBox(height: 5),
-          
-          Text(
-            orderModel?.deliveryAddress != null
-                ? (Provider.of<SplashProvider>(context, listen: false)
-                        .configModel?.branches
-                        ?.map((branch) => branch.id == orderModel?.branchId ? branch.name : null)
-                        .firstWhere((name) => name != null, orElse: () => 'Default Name'))
-                    ?? 'Default Name'
-                : '',
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.red,fontSize: 12), 
-          ),
-        ],
-      ),
-    ),
-  ],
-),
+            Row(
+              children: [
+                Image.asset(
+                  Images.location,
+                  color: ColorResources.COLOR_BLACK,
+                  height: 15,
+                  width: 15,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        orderModel!.deliveryAddress != null
+                            ? orderModel!.deliveryAddress!.address!
+                            : 'Address not found',
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        orderModel?.deliveryAddress != null
+                            ? (Provider.of<SplashProvider>(context,
+                                        listen: false)
+                                    .configModel
+                                    ?.branches
+                                    ?.map((branch) =>
+                                        branch.id == orderModel?.branchId
+                                            ? branch.name
+                                            : null)
+                                    .firstWhere((name) => name != null,
+                                        orElse: () => 'Default Name')) ??
+                                'Default Name'
+                            : '',
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 15),
             Row(
               children: [
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => OrderDetailsScreen(orderModelItem: orderModel)));
+                        builder: (_) => OrderDetailsScreen(
+                              orderModelItem: orderModel,
+                              isAlreadyCollectedOrNot:
+                                  orderModel!.orderStatus == 'out_for_delivery'
+                                      ? true
+                                      : false,
+                            )));
                   },
                   child: Text(
                     getTranslated('Delivery', context)!,
@@ -141,17 +157,20 @@ class HomeOrderWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 20),
                 CustomButton(
-        isShowBorder: true,
-        borderColor: ColorResources.Boarder_COLOR,
-        buttonColor: ColorResources.COLOR_WHITE,
-        btnTxt: orderModel!.orderStatus == 'out_for_delivery'
-            ? getTranslated('Already Collected', context)!
-            : getTranslated('Collect Order', context)!,
-        textColor: ColorResources.COLOR_PRIMARY,
-                  onTap: () {
-                     Navigator.push(context, MaterialPageRoute(builder:(context)=>BranchDetailsScreen(orderModelItem: orderModel) ));
-                  }
-                ),
+                    isShowBorder: true,
+                    borderColor: ColorResources.Boarder_COLOR,
+                    buttonColor: ColorResources.COLOR_WHITE,
+                    btnTxt: orderModel!.orderStatus == 'out_for_delivery'
+                        ? getTranslated('Already Collected', context)!
+                        : getTranslated('Collect Order', context)!,
+                    textColor: ColorResources.COLOR_PRIMARY,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BranchDetailsScreen(
+                                  orderModelItem: orderModel)));
+                    }),
               ],
             ),
           ],
@@ -172,12 +191,14 @@ class HomeOrderWidget extends StatelessWidget {
               onTap: () async {
                 Navigator.pop(context);
                 await MapUtils.openMap(
-                  double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
-                  double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
-                  position.latitude,
-                  position.longitude,
-                  true // Pass true to indicate Google Maps
-                );
+                    double.tryParse(orderModel!.deliveryAddress!.latitude!) ??
+                        23.8103,
+                    double.tryParse(orderModel!.deliveryAddress!.longitude!) ??
+                        90.4125,
+                    position.latitude,
+                    position.longitude,
+                    true // Pass true to indicate Google Maps
+                    );
               },
             ),
             ListTile(
@@ -186,12 +207,14 @@ class HomeOrderWidget extends StatelessWidget {
               onTap: () async {
                 Navigator.pop(context);
                 await MapUtils.openMap(
-                  double.tryParse(orderModel!.deliveryAddress!.latitude!) ?? 23.8103,
-                  double.tryParse(orderModel!.deliveryAddress!.longitude!) ?? 90.4125,
-                  position.latitude,
-                  position.longitude,
-                  false // Pass false to indicate Waze
-                );
+                    double.tryParse(orderModel!.deliveryAddress!.latitude!) ??
+                        23.8103,
+                    double.tryParse(orderModel!.deliveryAddress!.longitude!) ??
+                        90.4125,
+                    position.latitude,
+                    position.longitude,
+                    false // Pass false to indicate Waze
+                    );
               },
             ),
           ],
@@ -203,11 +226,18 @@ class HomeOrderWidget extends StatelessWidget {
 
 class MapUtils {
   MapUtils._();
-  
-  static Future<void> openMap(double destinationLatitude, double destinationLongitude, double userLatitude, double userLongitude, bool isGoogleMap) async {
-    String googleUrl = 'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&travelmode=driving';
-    String wazeUrl = 'https://waze.com/ul?ll=$destinationLatitude,$destinationLongitude&navigate=yes';
-    
+
+  static Future<void> openMap(
+      double destinationLatitude,
+      double destinationLongitude,
+      double userLatitude,
+      double userLongitude,
+      bool isGoogleMap) async {
+    String googleUrl =
+        'https://www.google.com/maps/dir/?api=1&origin=$userLatitude,$userLongitude&destination=$destinationLatitude,$destinationLongitude&travelmode=driving';
+    String wazeUrl =
+        'https://waze.com/ul?ll=$destinationLatitude,$destinationLongitude&navigate=yes';
+
     if (isGoogleMap) {
       if (await canLaunchUrl(Uri.parse(googleUrl))) {
         await launchUrlString(googleUrl);

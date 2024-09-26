@@ -193,12 +193,21 @@ class _BranchDetailsScreenState extends State<BranchDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             const Icon(Icons.watch_later, size: 17),
-                            orderModel!.deliveryTime == null ? Text(DateConverter.isoStringToLocalDateOnly(orderModel!.createdAt!),
-                              style: rubikRegular,
-                            ) : Text(
-                              DateConverter.deliveryDateAndTimeToDate(orderModel!.deliveryDate!, orderModel!.deliveryTime!, context),
-                              style: rubikRegular,
-                            ),
+                          Text(
+                                    (orderModel?.deliveryDate == null ||
+                                            orderModel!.deliveryDate!.isEmpty ||
+                                            orderModel?.deliveryTime == null ||
+                                            orderModel!.deliveryTime!.isEmpty)
+                                        ? DateConverter
+                                            .isoStringToLocalDateOnly(
+                                                orderModel!.createdAt!)
+                                        : DateConverter
+                                            .deliveryDateAndTimeToDate(
+                                                orderModel!.deliveryDate!,
+                                                orderModel!.deliveryTime!,
+                                                context),
+                                    style: rubikRegular,
+                                  ),
                           ],
                         ),
                       ),

@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _saveOrderIdToPreferences();
     _fetchInitialOnlineStatus();
-    
+      Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
     });

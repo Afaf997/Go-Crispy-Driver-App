@@ -76,7 +76,7 @@ Future<void> _playAudio([BuildContext? context]) async {
       log('Error playing audio: $error');
     });
 
-    await Future.delayed(const Duration(seconds: 2)); // Optional delay to allow audio to play
+    await Future.delayed(const Duration(seconds: 10)); // Optional delay to allow audio to play
 
     await audioPlayer.dispose();
   } catch (e) {

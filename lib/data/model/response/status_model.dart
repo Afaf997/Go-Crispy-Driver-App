@@ -1,22 +1,25 @@
-class OrderCountModel {
-  final List<dynamic> allOrders;
-  final List<dynamic> completedOrders;
-  final List<dynamic> pendingOrders;
+class OrderSummary {
+  int allOrders;
+  int completedOrders;
+  int pendingOrders;
 
-  OrderCountModel({
+  // Constructor
+  OrderSummary({
     required this.allOrders,
     required this.completedOrders,
     required this.pendingOrders,
   });
 
-  factory OrderCountModel.fromJson(Map<String, dynamic> json) {
-    return OrderCountModel(
-      allOrders: json['all_orders'] ?? [],
-      completedOrders: json['completed_orders'] ?? [],
-      pendingOrders: json['pending_orders'] ?? [],
+  // Factory method to create an instance from a JSON map
+  factory OrderSummary.fromJson(Map<String, dynamic> json) {
+    return OrderSummary(
+      allOrders: json['all_orders'],
+      completedOrders: json['completed_orders'],
+      pendingOrders: json['pending_orders'],
     );
   }
 
+  // Method to convert the instance to a JSON map
   Map<String, dynamic> toJson() {
     return {
       'all_orders': allOrders,

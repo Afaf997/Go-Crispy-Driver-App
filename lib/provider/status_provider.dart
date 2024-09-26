@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:resturant_delivery_boy/data/model/response/base/api_response.dart';
 import 'package:resturant_delivery_boy/data/model/response/status_model.dart';
@@ -9,17 +11,19 @@ class StatusProvider with ChangeNotifier {
 
   StatusProvider({this.statusRepo});
 
-  OrderCountModel? _orderCountModel;
+  OrderSummary? _orderCountModel;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  OrderCountModel? get orderCountModel => _orderCountModel;
+  OrderSummary? get orderCountModel => _orderCountModel;
 
   getStatusInfo(BuildContext context) async {
     _isLoading = true;
+    notifyListeners();
     ApiResponse apiResponse = await statusRepo!.getStatus();
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      _orderCountModel = OrderCountModel.fromJson(apiResponse.response!.data);
+      _orderCountModel = OrderSummary.fromJson(apiResponse.response!.data);
+      log("testt + ${_orderCountModel?.toJson()}");
     } else {
       ApiChecker.checkApi(apiResponse);
     }
