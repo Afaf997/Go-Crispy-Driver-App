@@ -68,7 +68,7 @@ flutter:
     - assets/icon/
     - assets/image/
     - assets/language/
-    - assets/image/audio.wav
+    - assets/audio/audio.wav
 
   fonts:
     - family: Rubik
