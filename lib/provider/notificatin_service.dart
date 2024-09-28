@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,9 +7,9 @@ class NotificationService {
 
   Future<void> initNotifications() async {
     await firebaseMessaging.requestPermission();
-    
+
     // Retrieve the FCM token
     final fCMToken = await firebaseMessaging.getToken();
-    // log('FCM Token: $fCMToken');
+    log('FCM Token: $fCMToken');
   }
 }
