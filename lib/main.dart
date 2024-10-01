@@ -86,8 +86,6 @@ Future<void> _playAudio([BuildContext? context]) async {
     }
   }
 }
-
-// Error dialog display
 void _showErrorDialog(BuildContext context, String errorMessage) {
   showDialog(
     context: context,
@@ -111,7 +109,6 @@ void _showErrorDialog(BuildContext context, String errorMessage) {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Firebase initialization
   await Firebase.initializeApp();
   
   NotificationService firebaseApi = NotificationService();

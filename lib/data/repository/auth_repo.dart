@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -34,7 +35,7 @@ class AuthRepo {
   Future<void> saveUserToken(String token) async {
     dioClient?.token = token;
     dioClient?.dio?.options.headers = {'Content-Type': 'application/json; charset=UTF-8', 'Authorization': 'Bearer $token'};
-
+  log("token  " + token);
     try {
       await sharedPreferences!.setString(AppConstants.token, token);
     } catch (e) {

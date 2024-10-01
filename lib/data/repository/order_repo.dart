@@ -36,6 +36,7 @@ Future<ApiResponse> performPostRequest() async {
     try {
       final response = await dioClient!.get('${AppConstants.orderDetailsUri}${sharedPreferences!.get(AppConstants.token)}&order_id=$orderID');
       return ApiResponse.withSuccess(response);
+      
     } catch (e) {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
