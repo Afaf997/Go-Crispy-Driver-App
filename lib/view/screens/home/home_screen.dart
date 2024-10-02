@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           Positioned(
-            top: 180,
+            top: 250,
             left: 0,
             right: 0,
             child: Padding(
@@ -205,10 +205,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildStatistics(context),
-                  const SizedBox(height: 11),
+                  // buildStatistics(context),
+                  // const SizedBox(height: 11),
                   _buildActiveOrdersTitle(),
-                  const SizedBox(height: 8),
+                  // const SizedBox(height: 8),
                   SizedBox(
                     height: MediaQuery.of(context).size.height - 400,
                     child: Consumer<OrderProvider>(
