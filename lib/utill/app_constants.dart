@@ -10,7 +10,7 @@ class AppConstants {
   static const String loginUri = '/api/v1/auth/delivery-man/login';
   static const String deliverymanOnlineUri ='https://project.artisans.qa/go-crispy-new/api/v1/delivery-man/deliveryman-status?delivery_man_id=1&is_online=1';
   static const String deliveryOfflineUri = 'https://project.artisans.qa/go-crispy-new/api/v1/delivery-man/deliveryman-status?is_online=0';
-  static const String orderCountUri = 'https://project.artisans.qa/go-crispy-new/api/v1/delivery-man/deliveryman-orders-count?delivery_man_id=1';
+  static const String orderCountUri = 'https://project.artisans.qa/go-crispy-new/api/v1/delivery-man/deliveryman-orders-count';
   static const String notificationUri = '/api/v1/notifications';
   static const String updateProfileUri = '/api/v1/customer/update-profile';
   static const String currentOrdersUri = '/api/v1/delivery-man/current-orders?token=';
