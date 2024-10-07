@@ -5,10 +5,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import 'package:resturant_delivery_boy/data/repository/response_model.dart';
-import 'package:resturant_delivery_boy/provider/profile_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:resturant_delivery_boy/data/model/response/config_model.dart';

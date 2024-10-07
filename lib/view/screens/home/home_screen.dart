@@ -221,13 +221,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         child: orderProvider.currentOrders.isNotEmpty
                             ? ListView.builder(
-                                itemCount: orderProvider.currentOrders.length,
-                                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                                itemBuilder: (context, index) => HomeOrderWidget(
-                                  orderModel: orderProvider.currentOrders[index],
-                                  index: index,
-                                ),
-                              )
+  // Show the latest 5 items or all items if there are less than 5
+  itemCount: orderProvider.currentOrders.length >= 5 
+      ? 5 
+      : orderProvider.currentOrders.length,
+  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+  itemBuilder: (context, index) {
+    // Calculate the correct index for the latest items
+    int reverseIndex = orderProvider.currentOrders.length - 1 - index;
+    return HomeOrderWidget(
+      orderModel: orderProvider.currentOrders[reverseIndex],
+      index: reverseIndex,
+    );
+  },
+)
                             : const Center(child: Text("Orders not available")),
                       ),
                     ),
