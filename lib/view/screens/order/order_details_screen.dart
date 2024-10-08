@@ -1092,6 +1092,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       ),
                                     ),
                                   ),
+                                        orderModel!.orderStatus != 'delivered' && !orderModel!.isGuest! ? SafeArea(child: Center(
+                child: Container(
+                  width: 1170,
+                  padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                  child: CustomButton(btnTxt: getTranslated('chat_with_customer', context), onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(orderModel: orderModel)));
+                  }),
+                ),
+              )) : const SizedBox(),
                                 ]),
                           ),
                           const SizedBox(height: 20),
