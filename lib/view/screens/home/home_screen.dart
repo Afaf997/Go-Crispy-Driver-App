@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:resturant_delivery_boy/data/model/response/current_order.dart';
 import 'package:resturant_delivery_boy/data/model/response/order_model.dart';
+import 'package:resturant_delivery_boy/helper/price_converter.dart';
 import 'package:resturant_delivery_boy/provider/order_provider.dart';
 import 'package:resturant_delivery_boy/provider/profile_provider.dart';
 import 'package:resturant_delivery_boy/provider/splash_provider.dart';
@@ -11,6 +12,7 @@ import 'package:resturant_delivery_boy/provider/status_provider.dart';
 import 'package:resturant_delivery_boy/provider/online_provider.dart';
 import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/utill/images.dart';
+import 'package:resturant_delivery_boy/utill/styles.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/order_widget.dart';
 import 'package:resturant_delivery_boy/view/screens/home/widget/statistics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,15 +28,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
   Timer? _timer;
+  double totalAmount = 0.00;
 
   @override
   void initState() {
     super.initState();
     _saveOrderIdToPreferences();
     _fetchInitialOnlineStatus();
-      Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
+    Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
     });
@@ -50,8 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchInitialOnlineStatus() async {
     final onlineProvider = Provider.of<OnlineProvider>(context, listen: false);
-    String deliveryManId = (await SharedPreferences.getInstance()).getString('deliveryManId') ?? '1'; // Change as necessary
-    onlineProvider.getInitialStatus(context, deliveryManId); // Fetch the initial status
+    String deliveryManId =
+        (await SharedPreferences.getInstance()).getString('deliveryManId') ??
+            '1'; // Change as necessary
+    onlineProvider.getInitialStatus(
+        context, deliveryManId); // Fetch the initial status
   }
 
   @override
@@ -66,6 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<ProfileProvider>(context, listen: false).getUserInfo(context);
     Provider.of<StatusProvider>(context, listen: false).getStatusInfo(context);
     Provider.of<OrderProvider>(context, listen: false).getAllOrders(context);
+    Provider.of<OrderProvider>(context, listen: false)
+        .getOrderHistory(context, false, null);
+    OrderProvider orderProvider =
+        Provider.of<OrderProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: ColorResources.kbackgroundColor,
@@ -118,7 +129,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       value: isOnline,
                                       onChanged: (bool newValue) {
                                         // Update online status
-                                        Provider.of<OnlineProvider>(context, listen: false).toggleOnlineStatus(context, newValue);
+                                        Provider.of<OnlineProvider>(context,
+                                                listen: false)
+                                            .toggleOnlineStatus(
+                                                context, newValue);
                                       },
                                       activeColor: Colors.white,
                                       activeTrackColor: Colors.green,
@@ -207,12 +221,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   buildStatistics(context),
                   const SizedBox(height: 11),
-                  _buildActiveOrdersTitle(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildActiveOrdersTitle(),
+                      Column(
+                          // mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Text("Total Amount"),
+                            // Text(
+                            //   "Qr ${orderProvider.orderTotalAmount}",
+                            //   style: const TextStyle(
+                            //       fontSize: 20, fontWeight: FontWeight.w500),
+                            // ),
+                            FutureBuilder<List<OrderModel>?>(
+                              future: Provider.of<OrderProvider>(context,
+                                      listen: false)
+                                  .getOrderHistory(context, false, null),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child:
+                                              CircularProgressIndicator())); // Show loading spinner while waiting for data
+                                } else if (snapshot.hasData &&
+                                    snapshot.data != null) {
+                                  OrderProvider orderProvider =
+                                      Provider.of<OrderProvider>(context,
+                                          listen: false);
+                                  double totalAmount = 0.0;
+
+                                  // Sum the order amounts for delivered orders
+                                  // orderProvider.allOrderHistory!.forEach((order) {
+                                  //   totalAmount += order.orderAmount ?? 0.0;
+                                  // });
+
+                                  orderProvider.allOrderHistory!
+                                      .forEach((order) {
+                                    // PriceConverter.convertPrice(
+                                    //     context,
+                                    //     (order.orderAmount ?? 0) +
+                                    //         (order.deliveryCharge ?? 0));
+                                    totalAmount += (order.orderAmount ?? 0.0) +
+                                        (order.deliveryCharge ?? 0.0);
+                                    // _orderTotalAmount = _temporderTotalAmount.toString();
+                                    // _orderHistoryTotal = _temporderTotalAmount;
+                                  });
+
+                                  return Text(
+                                    PriceConverter.convertPrice(
+                                      context,
+                                      totalAmount,
+                                    ),
+                                    style: rubikMedium.copyWith(
+                                        color: ColorResources.COLOR_PRIMARY,
+                                        fontSize: 22),
+                                  ); // Display total amount
+                                } else {
+                                  return Text('No orders available');
+                                }
+                              },
+                            ),
+                          ])
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   SizedBox(
                     height: MediaQuery.of(context).size.height - 400,
                     child: Consumer<OrderProvider>(
-                      builder: (context, orderProvider, child) => RefreshIndicator(
+                      builder: (context, orderProvider, child) =>
+                          RefreshIndicator(
                         key: _refreshIndicatorKey,
                         color: ColorResources.COLOR_PRIMARY,
                         backgroundColor: ColorResources.COLOR_WHITE,
@@ -221,20 +303,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         child: orderProvider.currentOrders.isNotEmpty
                             ? ListView.builder(
-  // Show the latest 5 items or all items if there are less than 5
-  itemCount: orderProvider.currentOrders.length >= 5 
-      ? 5 
-      : orderProvider.currentOrders.length,
-  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-  itemBuilder: (context, index) {
-    // Calculate the correct index for the latest items
-    int reverseIndex = orderProvider.currentOrders.length - 1 - index;
-    return HomeOrderWidget(
-      orderModel: orderProvider.currentOrders[reverseIndex],
-      index: reverseIndex,
-    );
-  },
-)
+                                // Show the latest 5 items or all items if there are less than 5
+                                itemCount:
+                                    orderProvider.currentOrders.length >= 5
+                                        ? 5
+                                        : orderProvider.currentOrders.length,
+                                physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics()),
+                                itemBuilder: (context, index) {
+                                  // Calculate the correct index for the latest items
+                                  int reverseIndex =
+                                      orderProvider.currentOrders.length -
+                                          1 -
+                                          index;
+                                  return HomeOrderWidget(
+                                    orderModel:
+                                        orderProvider.currentOrders[index],
+                                    index: reverseIndex,
+                                  );
+                                },
+                              )
                             : const Center(child: Text("Orders not available")),
                       ),
                     ),
@@ -253,5 +341,14 @@ class _HomeScreenState extends State<HomeScreen> {
       'Active Orders',
       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
     );
+  }
+
+  calculateTotalAmount() {
+    totalAmount = 0.0;
+    OrderProvider orderProvider =
+        Provider.of<OrderProvider>(context, listen: false);
+    orderProvider.allOrderHistory!.forEach((item) {
+      totalAmount = totalAmount + item.orderAmount!;
+    });
   }
 }

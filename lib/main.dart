@@ -31,7 +31,8 @@ import 'package:workmanager/workmanager.dart';
 import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 AndroidNotificationChannel? channel;
 final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -49,15 +50,18 @@ void callbackDispatcher() {
 
 Future<void> checkOrdersAndPlayAudio() async {
   try {
-    final response = await dioClient?.get('${AppConstants.currentOrdersUri}${sharedPreferences?.getString(AppConstants.token)}');
+    final response = await dioClient?.get(
+        '${AppConstants.currentOrdersUri}${sharedPreferences?.getString(AppConstants.token)}');
 
     if (response?.statusCode == 200) {
       int currentOrderLength = response?.data.length ?? 0;
-      int? storedOrderLength = sharedPreferences?.getInt('storedOrderLength') ?? 0;
+      int? storedOrderLength =
+          sharedPreferences?.getInt('storedOrderLength') ?? 0;
 
       if (currentOrderLength > storedOrderLength) {
         await _playAudio(); // Called without context for background tasks
-        await sharedPreferences?.setInt('storedOrderLength', currentOrderLength);
+        await sharedPreferences?.setInt(
+            'storedOrderLength', currentOrderLength);
       }
     }
   } catch (e) {
@@ -76,7 +80,8 @@ Future<void> _playAudio([BuildContext? context]) async {
       log('Error playing audio: $error');
     });
 
-    await Future.delayed(const Duration(seconds: 10)); // Optional delay to allow audio to play
+    await Future.delayed(
+        const Duration(seconds: 10)); // Optional delay to allow audio to play
 
     await audioPlayer.dispose();
   } catch (e) {
@@ -86,6 +91,7 @@ Future<void> _playAudio([BuildContext? context]) async {
     }
   }
 }
+
 void _showErrorDialog(BuildContext context, String errorMessage) {
   showDialog(
     context: context,
@@ -108,31 +114,31 @@ void _showErrorDialog(BuildContext context, String errorMessage) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Firebase.initializeApp();
-  
+
   NotificationService firebaseApi = NotificationService();
   await firebaseApi.initNotifications();
-  
+
   // Request notification permission
   var status = await Permission.notification.status;
   if (!status.isGranted) {
     await Permission.notification.request();
   }
-  
+
   await di.init();
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
-  
+
   // Initialize WorkManager for background tasks
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  
+
   // Schedule a one-time task (testing delay)
   Workmanager().registerOneOffTask(
     fetchOrdersTask,
     fetchOrdersTask,
     initialDelay: const Duration(seconds: 10),
   );
-  
+
   if (defaultTargetPlatform == TargetPlatform.android) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel',
@@ -140,16 +146,17 @@ Future<void> main() async {
       importance: Importance.high,
     );
   }
-  
+
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
-  
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => di.sl<StatusProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<SplashProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<LanguageProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<OnlineProvider>()),
-      ChangeNotifierProvider(create: (context) => di.sl<LocalizationProvider>()),
+      ChangeNotifierProvider(
+          create: (context) => di.sl<LocalizationProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<AuthProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<ProfileProvider>()),
       ChangeNotifierProvider(create: (context) => di.sl<OrderProvider>()),

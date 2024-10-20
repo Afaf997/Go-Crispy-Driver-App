@@ -11,17 +11,21 @@ import 'package:resturant_delivery_boy/utill/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-
 class AuthRepo {
   final DioClient? dioClient;
   final SharedPreferences? sharedPreferences;
   AuthRepo({required this.dioClient, required this.sharedPreferences});
 
-  Future<ApiResponse> login({String? emailAddress, String? password}) async {
+  Future<ApiResponse> login(
+      {String? emailAddress, String? password, String? deviceToken}) async {
     try {
       Response response = await dioClient!.post(
         AppConstants.loginUri,
-        data: {"email": emailAddress, "password": password},
+        data: {
+          "email": emailAddress,
+          "password": password,
+          "device_token": deviceToken
+        },
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
@@ -29,13 +33,14 @@ class AuthRepo {
     }
   }
 
-
-
   // for  user token
   Future<void> saveUserToken(String token) async {
     dioClient?.token = token;
-    dioClient?.dio?.options.headers = {'Content-Type': 'application/json; charset=UTF-8', 'Authorization': 'Bearer $token'};
-  log("token  " + token);
+    dioClient?.dio?.options.headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $token'
+    };
+    log("token  " + token);
     try {
       await sharedPreferences!.setString(AppConstants.token, token);
     } catch (e) {
@@ -47,19 +52,29 @@ class AuthRepo {
     try {
       String? deviceToken;
       if (!Platform.isAndroid) {
-        NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
-          alert: true, announcement: false, badge: true, carPlay: false,
-          criticalAlert: false, provisional: false, sound: true,
+        NotificationSettings settings =
+            await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
         );
-        if(settings.authorizationStatus == AuthorizationStatus.authorized) {
+        if (settings.authorizationStatus == AuthorizationStatus.authorized) {
           deviceToken = await _saveDeviceToken();
         }
-      }else {
+      } else {
         deviceToken = await _saveDeviceToken();
       }
       Response response = await dioClient!.post(
         AppConstants.tokenUri,
-        data: {"_method": "put", "fcm_token": deviceToken, "token": sharedPreferences!.get(AppConstants.token)},
+        data: {
+          "_method": "put",
+          "fcm_token": deviceToken,
+          "token": sharedPreferences!.get(AppConstants.token)
+        },
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
@@ -84,15 +99,16 @@ class AuthRepo {
   }
 
   Future<bool> clearSharedData() async {
-    try{
+    try {
       await dioClient!.post(
         AppConstants.tokenUri,
         data: {
-          "_method": "put", "cm_firebase_token": '@',
+          "_method": "put",
+          "cm_firebase_token": '@',
           "token": sharedPreferences!.get(AppConstants.token),
         },
       );
-    }catch(e){
+    } catch (e) {
       debugPrint('error ---> $e');
     }
 
@@ -123,8 +139,8 @@ class AuthRepo {
     return await sharedPreferences!.remove(AppConstants.userEmail);
   }
 
-
-  Future<http.Response> registerDeliveryMan(DeliveryManBody deliveryManBody, List<MultipartBody> multiParts) async {
+  Future<http.Response> registerDeliveryMan(
+      DeliveryManBody deliveryManBody, List<MultipartBody> multiParts) async {
     http.Response response = await dioClient!.postMultipartData(
       AppConstants.register,
       deliveryManBody.toJson(),
@@ -132,5 +148,4 @@ class AuthRepo {
     );
     return response;
   }
-
 }
