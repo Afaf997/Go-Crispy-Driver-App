@@ -302,26 +302,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           return orderProvider.refresh(context);
                         },
                         child: orderProvider.currentOrders.isNotEmpty
-                            ? ListView.builder(
-                                // Show the latest 5 items or all items if there are less than 5
-                                itemCount:
-                                    orderProvider.currentOrders.length >= 5
-                                        ? 5
-                                        : orderProvider.currentOrders.length,
-                                physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics()),
-                                itemBuilder: (context, index) {
-                                  // Calculate the correct index for the latest items
-                                  int reverseIndex =
-                                      orderProvider.currentOrders.length -
-                                          1 -
-                                          index;
-                                  return HomeOrderWidget(
-                                    orderModel:
-                                        orderProvider.currentOrders[index],
-                                    index: reverseIndex,
-                                  );
-                                },
+                            ? Column(
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      // Show the latest 5 items or all items if there are less than 5
+                                      itemCount: orderProvider
+                                                  .currentOrders.length >=
+                                              5
+                                          ? 5
+                                          : orderProvider.currentOrders.length,
+                                      physics: const BouncingScrollPhysics(
+                                          parent:
+                                              AlwaysScrollableScrollPhysics()),
+                                      itemBuilder: (context, index) {
+                                        // Calculate the correct index for the latest items
+                                        int reverseIndex =
+                                            orderProvider.currentOrders.length -
+                                                1 -
+                                                index;
+                                        return HomeOrderWidget(
+                                          orderModel: orderProvider
+                                              .currentOrders[index],
+                                          index: reverseIndex,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 100)
+                                ],
                               )
                             : const Center(child: Text("Orders not available")),
                       ),
