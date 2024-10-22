@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -15,215 +16,346 @@ import 'package:resturant_delivery_boy/utill/styles.dart';
 import 'package:resturant_delivery_boy/view/base/custom_snackbar.dart';
 import 'package:resturant_delivery_boy/view/screens/chat/widget/message_bubble.dart';
 import 'package:resturant_delivery_boy/view/screens/chat/widget/message_bubble_shimmer.dart';
+
 class ChatScreen extends StatefulWidget {
   final OrderModel? orderModel;
-  const ChatScreen({Key? key,required this.orderModel}) : super(key: key);
+  const ChatScreen({Key? key, required this.orderModel}) : super(key: key);
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver{
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   final TextEditingController _inputMessageController = TextEditingController();
   FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
+  bool isFirstTimeLoading =
+      true; // Flag to control loading only at the first time
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<ChatProvider>(context, listen: false).getChatMessages(widget.orderModel!.id);
+    Provider.of<ChatProvider>(context, listen: false)
+        .getChatMessages(widget.orderModel!.id);
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer t) {
+      print("timer");
+      // _getMessages(repeat: true);
+      if (isFirstTimeLoading) {
+        //setState(() {
+        isFirstTimeLoading = true; // Only show loading at first fetch
+        //  });
+      }
 
+      try {
+        print("try");
+        Provider.of<ChatProvider>(context, listen: false)
+            .getChatMessages(widget.orderModel!.id)
+            .then((_) {
+          print("test3");
+          if (isFirstTimeLoading) {
+            //setState(() {
+            isFirstTimeLoading = false; // Disable loading after first fetch
+            // });
+          }
+        });
+      } catch (e) {
+        print(e.toString());
+      }
+
+      print("done");
+    });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      Provider.of<ChatProvider>(context, listen: false).getChatMessages(widget.orderModel!.id);
-
+      Provider.of<ChatProvider>(context, listen: false)
+          .getChatMessages(widget.orderModel!.id);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      Provider.of<ChatProvider>(context, listen: false).getChatMessages(widget.orderModel!.id);
+      Provider.of<ChatProvider>(context, listen: false)
+          .getChatMessages(widget.orderModel!.id);
     });
-
   }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  // Function to get chat messages
+  void _getMessages({bool repeat = false}) {
+    print("test2");
+    if (!repeat && mounted) {
+      setState(() {
+        isFirstTimeLoading = true; // Only show loading at first fetch
+      });
+
+      try {
+        print("try");
+        Provider.of<ChatProvider>(context, listen: false)
+            .getChatMessages(widget.orderModel!.id)
+            .then((_) {
+          print("test3");
+          if (!repeat) {
+            //setState(() {
+            isFirstTimeLoading = false; // Disable loading after first fetch
+            // });
+          }
+        });
+      } catch (e) {
+        print(e.toString());
+      }
+      print("done");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.orderModel!.customer!.fName!} ${widget.orderModel!.customer!.lName!}',style:const TextStyle(color: ColorResources.COLOR_WHITE),),backgroundColor: ColorResources.COLOR_PRIMARY,
-        iconTheme: const IconThemeData(
-    color: ColorResources.COLOR_WHITE, // Change back arrow color to white
-  ),
-
+      appBar: AppBar(
+          title: Text(
+            '${widget.orderModel!.customer!.fName!} ${widget.orderModel!.customer!.lName!}',
+            style: const TextStyle(color: ColorResources.COLOR_WHITE),
+          ),
+          backgroundColor: ColorResources.COLOR_PRIMARY,
+          iconTheme: const IconThemeData(
+            color:
+                ColorResources.COLOR_WHITE, // Change back arrow color to white
+          ),
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(width: 40,height: 40,
+              child: Container(
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
-                    border: Border.all(width: 2,color: Theme.of(context).cardColor),
+                    border: Border.all(
+                        width: 2, color: Theme.of(context).cardColor),
                     color: Theme.of(context).cardColor),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(50),
                   child: FadeInImage.assetNetwork(
                     fit: BoxFit.cover,
                     placeholder: Images.placeholderImage,
-                    image: '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.customerImageUrl}/${widget.orderModel!.customer!.image}',
-                  imageErrorBuilder: (c,t,o) => Image.asset(Images.placeholderImage),
+                    image:
+                        '${Provider.of<SplashProvider>(context, listen: false).baseUrls!.customerImageUrl}/${widget.orderModel!.customer!.image}',
+                    imageErrorBuilder: (c, t, o) =>
+                        Image.asset(Images.placeholderImage),
+                  ),
                 ),
               ),
-            ),
-          )]),
-      body:
-      Column(
+            )
+          ]),
+      body: Column(
         children: [
-          Consumer<ChatProvider>(builder: (context, chatProvider,child) {
-            bool isLoading = Provider.of<ChatProvider>(context, listen: false).messages == null;
+          Consumer<ChatProvider>(builder: (context, chatProvider, child) {
+            bool isLoading =
+                Provider.of<ChatProvider>(context, listen: false).messages ==
+                    null;
             return Expanded(
-              child: ListView.builder(
-                reverse: true,
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: isLoading ? 21 : chatProvider.messages!.length,
-                itemBuilder: (context, index) => isLoading
-                    ? MessageBubbleShimmer(isMe: index.isEven)
-                    : MessageBubble(messages: chatProvider.messages![index]),
-              )
-            );
+                child: ListView.builder(
+              reverse: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: isLoading ? 21 : chatProvider.messages!.length,
+              itemBuilder: (context, index) => isLoading && isFirstTimeLoading
+                  ? MessageBubbleShimmer(isMe: index.isEven)
+                  : MessageBubble(messages: chatProvider.messages![index]),
+            ));
           }),
-
-          SafeArea(child: Container(
+          SafeArea(
+              child: Container(
             color: Theme.of(context).cardColor,
             child: Column(children: [
-              Consumer<ChatProvider>(
-                  builder: (context, chatProvider,_) {
-                    return chatProvider.chatImage.isNotEmpty?
-                    SizedBox(height: 100,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        itemCount: chatProvider.chatImage.length,
-                        itemBuilder: (BuildContext context, index){
-                          return  chatProvider.chatImage.isNotEmpty?
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                Container(width: 100, height: 100,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeDefault)),
-                                    child: Image.file(File(chatProvider.chatImage[index].path), width: 100, height: 100, fit: BoxFit.cover,
-                                    ),
-                                  ) ,
-                                ),
-                                Positioned(
-                                  top:0,right:0,
-                                  child: InkWell(
-                                    onTap :() => chatProvider.removeImage(index),
-                                    child: Container(
-                                        decoration: const BoxDecoration(
+              Consumer<ChatProvider>(builder: (context, chatProvider, _) {
+                return chatProvider.chatImage.isNotEmpty
+                    ? SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemCount: chatProvider.chatImage.length,
+                          itemBuilder: (BuildContext context, index) {
+                            return chatProvider.chatImage.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          width: 100,
+                                          height: 100,
+                                          decoration: const BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.all(Radius.circular(Dimensions.paddingSizeDefault))
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20)),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(Dimensions
+                                                        .paddingSizeDefault)),
+                                            child: Image.file(
+                                              File(chatProvider
+                                                  .chatImage[index].path),
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
                                         ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(4.0),
-                                          child: Icon(Icons.clear,color: Colors.red,size: 15,),
-                                        )),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ):const SizedBox();
-
-                        },),
-                    ):const SizedBox();
-                  }
-              ),
-
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: InkWell(
+                                            onTap: () =>
+                                                chatProvider.removeImage(index),
+                                            child: Container(
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius
+                                                        .all(Radius.circular(
+                                                            Dimensions
+                                                                .paddingSizeDefault))),
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(4.0),
+                                                  child: Icon(
+                                                    Icons.clear,
+                                                    color: Colors.red,
+                                                    size: 15,
+                                                  ),
+                                                )),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox();
+                          },
+                        ),
+                      )
+                    : const SizedBox();
+              }),
               Row(children: [
                 InkWell(
                   onTap: () async {
-                    Provider.of<ChatProvider>(context, listen: false).pickImage(false);
+                    Provider.of<ChatProvider>(context, listen: false)
+                        .pickImage(false);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(width: 25,height: 25,
-                      child: Image.asset(Images.image, color: Theme.of(context).textTheme.bodyLarge!.color),
+                    child: SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: Image.asset(Images.image,
+                          color: Theme.of(context).textTheme.bodyLarge!.color),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 25,
-                  child: VerticalDivider(width: 0, thickness: 1, color: Theme.of(context).hintColor),
+                  child: VerticalDivider(
+                      width: 0,
+                      thickness: 1,
+                      color: Theme.of(context).hintColor),
                 ),
                 const SizedBox(width: Dimensions.paddingSizeDefault),
                 Expanded(
                   child: TextField(
                     controller: _inputMessageController,
-                    inputFormatters: [LengthLimitingTextInputFormatter(Dimensions.messageInputLen)],
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(
+                          Dimensions.messageInputLen)
+                    ],
                     textCapitalization: TextCapitalization.sentences,
-                    style: rubikRegular.copyWith(fontSize: Dimensions.fontSizeLarge),
+                    style: rubikRegular.copyWith(
+                        fontSize: Dimensions.fontSizeLarge),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
-                    onChanged: (newText){
-                      if(newText.trim().isNotEmpty && !Provider.of<ChatProvider>(context, listen: false).isSendButtonActive) {
-                        Provider.of<ChatProvider>(context, listen: false).toggleSendButtonActivity();
-                      }else if(newText.isEmpty && Provider.of<ChatProvider>(context, listen: false).isSendButtonActive) {
-                        Provider.of<ChatProvider>(context, listen: false).toggleSendButtonActivity();
+                    onChanged: (newText) {
+                      if (newText.trim().isNotEmpty &&
+                          !Provider.of<ChatProvider>(context, listen: false)
+                              .isSendButtonActive) {
+                        Provider.of<ChatProvider>(context, listen: false)
+                            .toggleSendButtonActivity();
+                      } else if (newText.isEmpty &&
+                          Provider.of<ChatProvider>(context, listen: false)
+                              .isSendButtonActive) {
+                        Provider.of<ChatProvider>(context, listen: false)
+                            .toggleSendButtonActivity();
                       }
                     },
                     onSubmitted: (String newText) {
-                      if(newText.trim().isNotEmpty && !Provider.of<ChatProvider>(context, listen: false).isSendButtonActive) {
-                        Provider.of<ChatProvider>(context, listen: false).toggleSendButtonActivity();
-                      }else if(newText.isEmpty && Provider.of<ChatProvider>(context, listen: false).isSendButtonActive) {
-                        Provider.of<ChatProvider>(context, listen: false).toggleSendButtonActivity();
+                      if (newText.trim().isNotEmpty &&
+                          !Provider.of<ChatProvider>(context, listen: false)
+                              .isSendButtonActive) {
+                        Provider.of<ChatProvider>(context, listen: false)
+                            .toggleSendButtonActivity();
+                      } else if (newText.isEmpty &&
+                          Provider.of<ChatProvider>(context, listen: false)
+                              .isSendButtonActive) {
+                        Provider.of<ChatProvider>(context, listen: false)
+                            .toggleSendButtonActivity();
                       }
                     },
                     decoration: InputDecoration(
                       //suffixIcon: Image.asset(Images.send,scale: 3,color: Theme.of(context).primaryColor,),
                       border: InputBorder.none,
                       hintText: 'Type here',
-                      hintStyle: rubikRegular.copyWith(color: Theme.of(context).hintColor, fontSize: Dimensions.fontSizeLarge),
+                      hintStyle: rubikRegular.copyWith(
+                          color: Theme.of(context).hintColor,
+                          fontSize: Dimensions.fontSizeLarge),
                     ),
                   ),
                 ),
-
-
-
-
-
-                Consumer<ChatProvider>(
-                    builder: (context, chatPro,_) {
-                      return InkWell(
-                        onTap: () async {
-                          if(Provider.of<ChatProvider>(context, listen: false).isSendButtonActive){
-                            chatPro.sendMessage(_inputMessageController.text.trim(),chatPro.chatImage,widget.orderModel!.id,context).then((value){
-                              if(value.statusCode==200){
-                                Provider.of<ChatProvider>(context, listen: false).getChatMessages(widget.orderModel!.id);
-                                _inputMessageController.clear();
-                              }
-                            });
-                            Provider.of<ChatProvider>(context, listen: false).toggleSendButtonActivity();
-                          }else{
-                            showCustomNotification(context,getTranslated('write_some_thing', context)!,type: NotificationType.warning);
+                Consumer<ChatProvider>(builder: (context, chatPro, _) {
+                  return InkWell(
+                    onTap: () async {
+                      if (Provider.of<ChatProvider>(context, listen: false)
+                          .isSendButtonActive) {
+                        chatPro
+                            .sendMessage(
+                                _inputMessageController.text.trim(),
+                                chatPro.chatImage,
+                                widget.orderModel!.id,
+                                context)
+                            .then((value) {
+                          if (value.statusCode == 200) {
+                            Provider.of<ChatProvider>(context, listen: false)
+                                .getChatMessages(widget.orderModel!.id);
+                            _inputMessageController.clear();
                           }
-
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),
-                          child: chatPro.isLoading ? const SizedBox(
-                            width: 25, height: 25,
-                            child: CircularProgressIndicator(),
-                          ) : Image.asset(Images.send, width: 25, height: 25,
-                            color: Provider.of<ChatProvider>(context).isSendButtonActive ? Theme.of(context).primaryColor : Theme.of(context).hintColor,
-                          ),
-                        ),
-                      );
-                    }
-                ),
-
+                        });
+                        Provider.of<ChatProvider>(context, listen: false)
+                            .toggleSendButtonActivity();
+                      } else {
+                        showCustomNotification(context,
+                            getTranslated('write_some_thing', context)!,
+                            type: NotificationType.warning);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: Dimensions.paddingSizeDefault),
+                      child: chatPro.isLoading
+                          ? const SizedBox(
+                              width: 25,
+                              height: 25,
+                              child: CircularProgressIndicator(),
+                            )
+                          : Image.asset(
+                              Images.send,
+                              width: 25,
+                              height: 25,
+                              color: Provider.of<ChatProvider>(context)
+                                      .isSendButtonActive
+                                  ? Theme.of(context).primaryColor
+                                  : Theme.of(context).hintColor,
+                            ),
+                    ),
+                  );
+                }),
               ]),
             ]),
           )),
-
         ],
       ),
     );

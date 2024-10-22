@@ -28,7 +28,7 @@ Widget buildStatistics(BuildContext context) {
                   child: buildStatCard(
                       title: 'Total Orders',
                       count: totalOrders, // Use actual count value
-                      color: ColorResources.COLOR_PRIMARY,
+                      color: const Color.fromRGBO(237, 93, 55, 1),
                       width: 169,
                       height: 155,
                       countFontSize: 60,

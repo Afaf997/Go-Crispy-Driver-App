@@ -98,6 +98,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                       color: ColorResources.COLOR_PRIMARY,
                                       fontSize: 24),
                                 ),
+                                Text(
+                                  "Order Count : ${order.allOrderHistory?.length ?? 0}",
+                                  style: rubikMedium.copyWith(fontSize: 14),
+                                ),
                                 Expanded(
                                   child: ListView.builder(
                                       itemCount: order.allOrderHistory!.length,
