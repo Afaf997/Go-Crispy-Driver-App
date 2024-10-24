@@ -27,7 +27,7 @@ import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/view/screens/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
+
 import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
 
@@ -41,13 +41,6 @@ SharedPreferences? sharedPreferences;
 
 const fetchOrdersTask = "fetchOrdersTask";
 
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    await checkOrdersAndPlayAudio();
-    return Future.value(true);
-  });
-}
-
 Future<void> checkOrdersAndPlayAudio() async {
   try {
     final response = await dioClient?.get(
@@ -59,7 +52,7 @@ Future<void> checkOrdersAndPlayAudio() async {
           sharedPreferences?.getInt('storedOrderLength') ?? 0;
 
       if (currentOrderLength > storedOrderLength) {
-        await _playAudio(); // Called without context for background tasks
+        await _playAudio();
         await sharedPreferences?.setInt(
             'storedOrderLength', currentOrderLength);
       }
@@ -129,15 +122,15 @@ Future<void> main() async {
   await di.init();
   await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
 
-  // Initialize WorkManager for background tasks
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  // // Initialize WorkManager for background tasks
+  // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
-  // Schedule a one-time task (testing delay)
-  Workmanager().registerOneOffTask(
-    fetchOrdersTask,
-    fetchOrdersTask,
-    initialDelay: const Duration(seconds: 10),
-  );
+  // // Schedule a one-time task (testing delay)
+  // Workmanager().registerOneOffTask(
+  //   fetchOrdersTask,
+  //   fetchOrdersTask,
+  //   initialDelay: const Duration(seconds: 10),
+  // );
 
   if (defaultTargetPlatform == TargetPlatform.android) {
     channel = const AndroidNotificationChannel(

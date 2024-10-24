@@ -10,7 +10,6 @@ Widget buildStatistics(BuildContext context) {
       if (statusProvider.isLoading) {
         return const Center(child: CircularProgressIndicator());
       } else if (statusProvider.orderCountModel != null) {
-        // Get actual values, not lengths
         final totalOrders = statusProvider.orderCountModel!.allOrders.toString();
         final completedOrders = statusProvider.orderCountModel!.completedOrders.toString();
         final pendingOrders = statusProvider.orderCountModel!.pendingOrders.toString();

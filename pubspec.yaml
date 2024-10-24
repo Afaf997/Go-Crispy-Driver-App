@@ -45,7 +45,6 @@ dependencies:
   flutter_native_splash: ^2.4.1
   audioplayers: ^6.1.0
   flutter_background_service: ^5.0.10
-  workmanager: ^0.5.2
   # just_audio_background: ^0.0.1-beta.13
   # just_audio: ^0.9.40
 
