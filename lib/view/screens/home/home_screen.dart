@@ -253,23 +253,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                   OrderProvider orderProvider =
                                       Provider.of<OrderProvider>(context,
                                           listen: false);
-                                  double totalAmount = 0.0;
+                                  // double totalAmount = 0.0;
 
                                   // Sum the order amounts for delivered orders
                                   // orderProvider.allOrderHistory!.forEach((order) {
                                   //   totalAmount += order.orderAmount ?? 0.0;
                                   // });
 
-                                  orderProvider.allOrderHistory!
-                                      .forEach((order) {
-                                    // PriceConverter.convertPrice(
-                                    //     context,
-                                    //     (order.orderAmount ?? 0) +
-                                    //         (order.deliveryCharge ?? 0));
-                                    totalAmount += (order.orderAmount ?? 0.0) +
-                                        (order.deliveryCharge ?? 0.0);
-                                    // _orderTotalAmount = _temporderTotalAmount.toString();
-                                    // _orderHistoryTotal = _temporderTotalAmount;
+                                  // orderProvider.allOrderHistory!
+                                  //     .forEach((order) {
+                                  //   // PriceConverter.convertPrice(
+                                  //   //     context,
+                                  //   //     (order.orderAmount ?? 0) +
+                                  //   //         (order.deliveryCharge ?? 0));
+                                  //   totalAmount += (order.orderAmount ?? 0.0) +
+                                  //       (order.deliveryCharge ?? 0.0);
+                                  //   // _orderTotalAmount = _temporderTotalAmount.toString();
+                                  //   // _orderHistoryTotal = _temporderTotalAmount;
+                                  // });
+
+                                  final DateTime today = DateTime.now();
+                                  double totalAmount = 0.0;
+
+                                  orderProvider.allOrderHistory
+                                      ?.forEach((order) {
+                                    // Parse the date string from updatedAt
+                                    DateTime orderDate = DateTime.parse(order
+                                            .updatedAt ??
+                                        ""); // assuming `updatedAt` is the key
+
+                                    // Check if the order is delivered and if it was placed today
+                                    if (order.orderStatus == "delivered" &&
+                                        orderDate.year == today.year &&
+                                        orderDate.month == today.month &&
+                                        orderDate.day == today.day) {
+                                      totalAmount +=
+                                          (order.orderAmount ?? 0.0) +
+                                              (order.deliveryCharge ?? 0.0);
+                                    }
                                   });
 
                                   return Text(
@@ -282,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontSize: 22),
                                   ); // Display total amount
                                 } else {
-                                  return Text('No orders available');
+                                  return const Text('No orders available');
                                 }
                               },
                             ),

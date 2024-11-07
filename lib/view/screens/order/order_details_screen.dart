@@ -42,16 +42,12 @@
 // class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 //   OrderModel? orderModel;
 //   double? deliveryCharge = 0;
-  
-
-
 
 //   @override
 //   void initState() {
 //     orderModel = widget.orderModelItem;
 
 //     _loadData();
-
 
 //     super.initState();
 //   }
@@ -78,7 +74,6 @@
 //       });
 //     }
 //   }
-
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -131,7 +126,6 @@
 //             subTotal = itemsPrice + tax + addOns;
 //             totalPrice = subTotal - discount + deliveryCharge! - orderModel!.couponDiscountAmount!;
 
-
 //           }
 
 //           List<OrderPartialPayment> paymentList = [];
@@ -146,7 +140,6 @@
 //               ));
 //             }
 //           }
-
 
 //           return order.orderDetails != null && orderModel!.orderAmount != null
 //               ? Column(
@@ -188,7 +181,6 @@
 //                         || orderModel!.orderStatus == 'out_for_delivery'
 //                     ) const TimerView(),
 
-
 //                     const SizedBox(height: 20),
 
 //                     Container(
@@ -199,7 +191,7 @@
 //                         boxShadow: [BoxShadow(
 //                           color: Theme.of(context).shadowColor,
 //                            spreadRadius: 1,
-                           
+
 //                         )],
 //                       ),
 //                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -351,7 +343,6 @@
 //                                   ),
 //                                 ]),
 //                                 const SizedBox(height: Dimensions.paddingSizeSmall),
-
 
 //                                 variationText != '' ? Row(
 //                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -525,8 +516,6 @@
 //                        ),
 //                      ),
 
-
-
 //                     const SizedBox(height: 30),
 //                   ],
 //                 ),
@@ -542,7 +531,7 @@
 //         onTap: () async {
 //           try {
 //             Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-            
+
 //             _showDirectionOptions(context, position);
 //           } catch (e) {
 //             ScaffoldMessenger.of(context).showSnackBar(
@@ -582,7 +571,6 @@
 //     Navigator.pop(context);
 //   });
 // },
-
 
 //                       ///Put label over here
 //                       label: Text(
@@ -727,7 +715,6 @@
 
 // }
 
-
 // class ProductTypeView extends StatelessWidget {
 //   final String? productType;
 //   const ProductTypeView({Key? key, this.productType}) : super(key: key);
@@ -748,7 +735,6 @@
 //       ),
 //     );
 //   }
-
 
 // }
 // class MapUtils {
@@ -804,9 +790,13 @@ import 'package:url_launcher/url_launcher_string.dart';
 class OrderDetailsScreen extends StatefulWidget {
   final OrderModel? orderModelItem;
   final bool isAlreadyCollectedOrNot;
+  final bool? isNavigate;
 
   const OrderDetailsScreen(
-      {Key? key, this.orderModelItem, this.isAlreadyCollectedOrNot = false})
+      {Key? key,
+      this.orderModelItem,
+      this.isAlreadyCollectedOrNot = false,
+      this.isNavigate})
       : super(key: key);
 
   @override
@@ -822,6 +812,28 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     orderModel = widget.orderModelItem;
 
     _loadData();
+
+    if (widget.isNavigate != null && widget.isNavigate!) {
+      // Provider.of<OrderProvider>(context, listen: false)
+      //     .getOrderModel(widget.orderModelItem?.id.toString() ?? "")
+      //     .then((value) {
+      //   orderModel = value;
+      // });
+      Provider.of<OrderProvider>(context, listen: false)
+          .getAllOrders(context)
+          .then((value) {
+        Provider.of<OrderProvider>(context, listen: false)
+            .currentOrders
+            .forEach((element) {
+          if (element.id == orderModel!.id) {
+            setState(() {
+              orderModel = element;
+            });
+          }
+        });
+      });
+      //OrderProvider
+    }
 
     super.initState();
   }
@@ -1092,15 +1104,29 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       ),
                                     ),
                                   ),
-                                        orderModel!.orderStatus != 'delivered' && !orderModel!.isGuest! ? SafeArea(child: Center(
-                child: Container(
-                  width: 1170,
-                  padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                  child: CustomButton(btnTxt: getTranslated('chat_with_customer', context), onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(orderModel: orderModel)));
-                  }),
-                ),
-              )) : const SizedBox(),
+                                  orderModel!.orderStatus != 'delivered' &&
+                                          !orderModel!.isGuest!
+                                      ? SafeArea(
+                                          child: Center(
+                                          child: Container(
+                                            width: 1170,
+                                            padding: const EdgeInsets.all(
+                                                Dimensions.paddingSizeSmall),
+                                            child: CustomButton(
+                                                btnTxt: getTranslated(
+                                                    'chat_with_customer',
+                                                    context),
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              ChatScreen(
+                                                                  orderModel:
+                                                                      orderModel)));
+                                                }),
+                                          ),
+                                        ))
+                                      : const SizedBox(),
                                 ]),
                           ),
                           const SizedBox(height: 20),
@@ -1647,7 +1673,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   : pi, // in radians
                               child: Directionality(
                                 textDirection: TextDirection.ltr,
-                                child: widget.isAlreadyCollectedOrNot == true
+                                child: widget.isAlreadyCollectedOrNot == true &&
+                                        widget.isNavigate == null &&
+                                        !widget.isNavigate!
                                     ? SliderButton(
                                         action: () {
                                           MyOrderScreen.checkPermission(context,
