@@ -46,7 +46,7 @@ class OnlineRepo {
       log("Retrieving Initial Online Status for Delivery Man ID: $deliveryManId");
 
       final response = await dioClient.post(
-        '${AppConstants.baseUrl}api/v1/delivery-man/get-deliveryman-status?delivery_man_id=$deliveryManId',
+        '${AppConstants.baseUrl}/api/v1/delivery-man/get-deliveryman-status?delivery_man_id=$deliveryManId',
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
