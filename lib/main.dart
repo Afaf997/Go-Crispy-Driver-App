@@ -27,7 +27,6 @@ import 'package:resturant_delivery_boy/utill/color_resources.dart';
 import 'package:resturant_delivery_boy/view/screens/splash/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'di_container.dart' as di;
 import 'provider/time_provider.dart';
 
@@ -72,9 +71,7 @@ Future<void> _playAudio([BuildContext? context]) async {
     }).catchError((error) {
       log('Error playing audio: $error');
     });
-
-    await Future.delayed(
-        const Duration(seconds: 10)); // Optional delay to allow audio to play
+    await Future.delayed(const Duration(seconds: 10)); // Optional delay to allow audio to play
 
     await audioPlayer.dispose();
   } catch (e) {
